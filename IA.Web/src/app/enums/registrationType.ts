@@ -1,5 +1,0 @@
-export enum RegistrationType{
-  FIRST_REGISTRATION=0,
-  REGISTRATION_EXTENSION=1,
-  OWNERSHIP_CHANGE=2
-}
