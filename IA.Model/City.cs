@@ -26,6 +26,7 @@ namespace IA.Model
 
         [NotMapped]
         public string CantonName { get; set; }
+
         [NotMapped]
         public string CityNameMunicipalityCode { get; set; }
     }

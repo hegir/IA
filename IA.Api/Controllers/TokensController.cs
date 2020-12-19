@@ -53,7 +53,7 @@ namespace IA.Api.Controllers
                     {
                         case "password":
                             
-                            user = _repositoryUser.FindOne(x => x.Username == parameters.Username.ToLower() && x.PasswordHash == _securityProvider.CreateMD5(parameters.Password));
+                            user = _repositoryUser.FindOne(x => x.Email == parameters.Username.ToLower() && x.PasswordHash == _securityProvider.CreateMD5(parameters.Password));
                           
                             if(user == null)
                             {
@@ -111,13 +111,12 @@ namespace IA.Api.Controllers
             AuthTokenDto token = new AuthTokenDto();
             List<Claim> claims = new List<Claim>();
 
-            claims.Add(new Claim(ClaimTypes.Name, !string.IsNullOrEmpty(user.Username) ? user.Username : string.Empty));
+            claims.Add(new Claim(ClaimTypes.Name, !string.IsNullOrEmpty(user.Email) ? user.Email : string.Empty));
             claims.Add(new Claim(ClaimTypes.Role, user.RoleId));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-            claims.Add(new Claim("username", !string.IsNullOrEmpty(user.Username) ? user.Username : string.Empty));
+            claims.Add(new Claim("email", !string.IsNullOrEmpty(user.Email) ? user.Email : string.Empty));
             claims.Add(new Claim("user_id", user.Id.ToString()));
             claims.Add(new Claim("full_name", user.FullName));
-            claims.Add(new Claim("company_id", user.CompanyId.ToString()));
 
             DateTime issuedAt = DateTime.UtcNow;
             DateTime validTo = issuedAt.AddMinutes(_configuration.GetValue<int>("Token:ExpirationTime"));
@@ -134,8 +133,6 @@ namespace IA.Api.Controllers
             refreshToken.IssuedAt = issuedAt;
             refreshToken.UserId = user.Id;
             refreshToken.Token = token.Token;
-
-            
             
             _repositoryRefreshToken.Insert(refreshToken);
 

@@ -69,6 +69,7 @@ namespace IA.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
         /// <summary>
         /// Get all Permissions by RoleId
         /// </summary>

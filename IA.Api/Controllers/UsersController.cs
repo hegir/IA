@@ -20,9 +20,8 @@ namespace IA.Api.Controllers
     [Route("/api/users")]
     [ApiController]
     [Authorize]
-    public class UsersController: ControllerBase
+    public class UsersController : ControllerBase
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRepositoryUser _repositoryUser;
         private readonly ILogger<UsersController> _logger;
         private readonly ISessionManager _sessionManager;
@@ -33,7 +32,7 @@ namespace IA.Api.Controllers
             ILogger<UsersController> logger,
             ISessionManager sessionManager,
             ISecurityProvider securityProvider,
-            ICacheProvider cacheProvider, IHttpContextAccessor httpContextAccessor
+            ICacheProvider cacheProvider
            )
         {
             _repositoryUser = repository;
@@ -41,7 +40,6 @@ namespace IA.Api.Controllers
             _sessionManager = sessionManager;
             _securityProvider = securityProvider;
             _cacheProvider = cacheProvider;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -51,7 +49,7 @@ namespace IA.Api.Controllers
         [HttpGet]
         [Route("")]
         [Permission("P_USERS")]
-        public  IActionResult GetAll(int limit, int offset, string sortingField, int order, string searchText, int? cityId)
+        public IActionResult GetAll(int limit, int offset, string sortingField, int order, string searchText, int? cityId)
         {
 
             return Ok(_repositoryUser.FindAll(limit, offset, sortingField, order, searchText, cityId));
@@ -64,7 +62,7 @@ namespace IA.Api.Controllers
         [HttpGet]
         [Route("count")]
         [Permission("P_USERS")]
-        public IActionResult Count( string searchText, int? cityId)
+        public IActionResult Count(string searchText, int? cityId)
         {
             return Ok(_repositoryUser.CountAll(searchText, cityId));
         }
@@ -76,76 +74,52 @@ namespace IA.Api.Controllers
         [HttpGet]
         [Route("{id:int}")]
         [Permission("P_USERS")]
-
         public IActionResult Get(int id)
         {
             return Ok(_repositoryUser.TryFind(id));
         }
 
-        ///// <summary>
-        ///// Insert new user
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpPost]
-        //[Route("")]
-        //[Permission("P_USERS_EDIT")]
-        //public IActionResult Post([FromBody] User entity)
-        //{
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            if (!string.IsNullOrEmpty(entity.Password))
-        //            {
-        //                entity.PasswordHash = _securityProvider.CreateMD5(entity.Password);
-        //            }
-        //            if (!string.IsNullOrEmpty(entity.Username))
-        //            {
-        //                entity.Username = entity.Username.ToLower();
-        //            }
-        //            using (var sc = _sessionManager.Create())
-        //            {
-        //                User existing = _repositoryUser.FindOne(x => x.Username == entity.Username);
-        //                User item = _repositoryUser.TryFind(entity.Id);
+        /// <summary>
+        /// Registration request
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("")]
+        [Permission("P_USERS_EDIT")]
+        public IActionResult Post([FromBody] User entity)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (!string.IsNullOrEmpty(entity.Password))
+                    {
+                        entity.PasswordHash = _securityProvider.CreateMD5(entity.Password);
+                    }
+                    if (!string.IsNullOrEmpty(entity.Email))
+                    {
+                        entity.Email = entity.Email.ToLower();
+                    }
+                    using (var sc = _sessionManager.Create())
+                    {
+                        if (_repositoryUser.FindOne(x => x.Email == entity.Email) != null)
+                            return BadRequest("USER_WITH_EMAIL_ALREADY_EXISTS");
 
-        //                if (!string.IsNullOrEmpty(entity.PersonalIdentificationNumber))
-        //                {
-        //                    existing = _repository.FindOne(x => x.PersonalIdentificationNumber == entity.PersonalIdentificationNumber && x.Id != entity.Id);
-        //                    if (existing != null)
-        //                    {
-        //                        sc.Rollback();
-        //                        return BadRequest("PERSONAL_IDENTIFICATION_NUMBER_ALREADY_EXIST");
-        //                    }
-        //                }
+                        _repositoryUser.Insert(entity);
 
+                        sc.Commit();
+                    }
+                    return Ok(entity);
+                }
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Post {{Type}} ERROR", entity.GetType());
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
 
-        //                if (!string.IsNullOrEmpty(entity.Username))
-        //                {
-        //                    if ((existing != null && item != null && existing.Id != entity.Id) || (item == null && existing != null))
-        //                    {
-        //                        sc.Rollback();
-        //                        return BadRequest("USERNAME_ALREADY_EXIST");
-        //                    }
-
-        //                    if (item == null)
-        //                        _repository.Insert(entity, null);
-        //                    else
-        //                        _repository.Update(entity, null);
-        //                }
-
-        //                sc.Commit();
-        //            }
-        //            return Ok(entity);
-        //        }
-        //        return BadRequest(ModelState);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Post {{Type}} ERROR", entity.GetType());
-        //        return StatusCode(StatusCodes.Status500InternalServerError);
-        //    }
-        //}
-       
 
         /// <summary>
         /// Get permissions for authorized user
@@ -175,28 +149,28 @@ namespace IA.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
         /// <summary>
         /// Change password for user
         /// </summary>
         /// <returns></returns>
         [HttpPut]
         [Route("passwordchange")]
-        [AllowAnonymous]
-        public IActionResult PasswordChangeUpdate([FromBody] PasswordChangeDto passwordChangeDto)
+        [Permission("P_USERS_EDIT")]
+        public IActionResult PasswordChange([FromBody] PasswordChangeDto passwordChangeDto)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    User user = _repositoryUser.TryFind(passwordChangeDto.UserId);
+                    User user = _repositoryUser.TryFind(User.GetUserId());
+
+                    if (user == null)
+                        return NotFound();
+
                     if (user.PasswordHash != _securityProvider.CreateMD5(passwordChangeDto.OldPassword))
                     {
                         return BadRequest("OLD_PASSWORD_NOT_CORRECT");
-                    }
-
-                    if (passwordChangeDto.Password != passwordChangeDto.RepeatPassword)
-                    {
-                        return BadRequest("REPEAT_PASSWORD_DOES_NOT_MATCH");
                     }
 
                     if (passwordChangeDto.OldPassword == passwordChangeDto.Password)

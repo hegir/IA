@@ -22,9 +22,9 @@ namespace IA.Model
         [Column("last_name")]
         public string LastName { get; set; }
 
-        [Required]
-        [Column("username")]
-        public string Username { get; set; }
+        [Column("email")]
+        [RegularExpression(@"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$", ErrorMessage = "EMAIL_FORMAT_IS_INVALID")]
+        public string Email { get; set; }
 
         [Column("password_hash")]
         public string PasswordHash { get; set; }
@@ -37,19 +37,12 @@ namespace IA.Model
         [Column("role_id")]
         public string RoleId { get; set; }
 
-        [Column("personal_identification_number")]
-        public string PersonalIdentificationNumber { get; set; }
-
         [Column("birth_date")]
         public DateTime BirthDate { get; set; }
 
         [Column("phone_number")]
         [RegularExpression(@"^[+]?[0-9-/]*$", ErrorMessage = "MOBILE_PHONE_NUMBER_IS_INVALID")]
         public string PhoneNumber { get; set; }
-
-        [Column("email")]
-        [RegularExpression(@"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$", ErrorMessage = "EMAIL_FORMAT_IS_INVALID")]
-        public string Email { get; set; }
 
         [Column("city_id")]
         public int CityId { get; set; }
@@ -62,21 +55,18 @@ namespace IA.Model
 
         [Column("address")]
         public string Address { get; set; }
+
         [NotMapped]
         public string FullName { get { return FirstName + " " + LastName; } }
-        [Required]
-        [Column("company_id")]
-        public int CompanyId { get; set; }
-        [NotMapped]
-        public bool HasMainOffices { get; set; }
 
 
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,.>])[A-Za-z\d!@#$%^&*()-_=+{};:,.>]{6,}$", ErrorMessage = "PASSWORD_FORMAT_ERROR_EXPRESION")]
         [NotMapped]
         public string Password { get; set; }
+
         [NotMapped]
         public string CityNameMunicipalityCode { get; set; }
-        [NotMapped]
-        public string AssignedToFullName { get; set; }
+
+
     }
 }

@@ -21,11 +21,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\AI.Repository.Autofac\IA.Repository.Autofac.csproj" />
 		<ProjectReference Include="..\IA.Cache\IA.Cache.csproj" />
 		<ProjectReference Include="..\IA.DTOs\IA.DTOs.csproj" />
 		<ProjectReference Include="..\IA.Notifications.Listener\IA.Notifications.Listener.csproj" />
 		<ProjectReference Include="..\IA.Providers\IA.Providers.csproj" />
+		<ProjectReference Include="..\IA.Repository.Autofac\IA.Repository.Autofac.csproj" />
 		<ProjectReference Include="..\IA.Repository.Base.Dapper\IA.Repository.Base.Dapper.csproj" />
 		<ProjectReference Include="..\IA.Api.Models\IA.Api.Models.csproj" />
 		<ProjectReference Include="..\IA.Repository.Dapper\IA.Repository.Dapper.csproj" />

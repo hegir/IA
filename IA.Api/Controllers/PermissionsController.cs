@@ -28,7 +28,6 @@ namespace IA.Api.Controllers
             return Ok(_repositoryPermission.FindAll());
         }
 
-
         [HttpGet]
         [Route("{id}")]
         [Permission("P_PERMISSIONS")]
@@ -36,7 +35,6 @@ namespace IA.Api.Controllers
         {
             return await base.Get(id);
         }
-
 
 
         [HttpGet]
@@ -51,7 +49,7 @@ namespace IA.Api.Controllers
         [HttpPost]
         [Route("")]
         [Permission("P_PERMISSIONS_EDIT")]
-        public IActionResult Post([FromBody] Permission entity)
+        public override async Task<IActionResult> Post([FromBody] Permission entity)
         {
             _repositoryPermission.Insert(entity);
             return Ok();
@@ -61,7 +59,7 @@ namespace IA.Api.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Permission("P_PERMISSIONS_EDIT")]
-        public IActionResult Delete(string id)
+        public override async Task<IActionResult> Delete(string id)
         {
             _repositoryPermission.Delete(id);
             return Ok();

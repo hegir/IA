@@ -56,7 +56,7 @@ namespace IA.Api.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Permission("P_ROLES_EDIT")]
-        public IActionResult Delete(string id)
+        public override async Task<IActionResult> Delete(string id)
         {
             _repositoryRole.Delete(id);
             return Ok();
