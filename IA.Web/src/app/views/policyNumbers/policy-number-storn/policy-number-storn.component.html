@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="col-md-12 width-100-percents ">
+      <mat-card-title>{{'POLICY_STORN' | translate}}</mat-card-title>
+  <form #form="ngForm" (ngSubmit)="storn(form)" autocomplete="off" class="m-t-20">
+      <mat-form-field class="example-full-width m-b-10">
+        <mat-select required
+          placeholder="{{'INSURANCE_COMPANY' | translate}}" type="text" #InsuranceId="ngModel"
+          [(ngModel)]="insuranceId" name="Insurance1" id="Insurance1">
+          <mat-option *ngFor="let insurance of insurances" [value]="insurance.Id">
+            {{insurance.Name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div *ngFor="let err of validationErrors?.Insurance1">
+        <span class="help-block text-danger">{{err}}</span>
+      </div>
+      <mat-form-field  class="example-full-width">
+        <input matInput required class="input" type="text" class="width-100-percents" #Number="ngModel" [(ngModel)]="number"
+          name="PolicyNumber" placeholder="{{'POLICY_NUMBER' | translate}}">
+      </mat-form-field>
+      <div *ngFor="let err of validationErrors?.PolicyNumber">
+        <span class="help-block text-danger">{{err}}</span>
+      </div>
+      <button type="submit" name="storn" mat-raised-button class="float-right outline-unset m-b-20" color="primary">
+        <i class="material-icons clear">clear</i>
+      {{'POLICY_STORN' | translate}}
+    </button>
+  </form>
+  </div>
+</div>

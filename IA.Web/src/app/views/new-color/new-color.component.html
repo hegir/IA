@@ -1,0 +1,19 @@
+<div class="popup">
+  <form #form="ngForm">
+    <div mat-dialog-content>
+
+      <mat-form-field class="example-full-width">
+        <input type="text" required matInput placeholder="{{'COLOR_NAME' | translate}}" #Name="ngModel"
+          [(ngModel)]="color.Name" name="Name">
+      </mat-form-field>
+      <div *ngFor="let err of validationErrors?.Name">
+        <span class="help-block text-danger">{{ err }}</span>
+      </div>
+      <div mat-dialog-actions class="float-right">
+        <button mat-button class="bg-danger outline-unset" (click)="close()">{{"CANCEL" | translate}}</button>
+        <button mat-button class="bg-success outline-unset" (click)="save(form)">{{"SAVE" | translate}}</button>
+      </div>
+    </div>
+  </form>
+</div>
+

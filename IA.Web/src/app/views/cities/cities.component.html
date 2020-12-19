@@ -1,0 +1,99 @@
+<div class="width-100">
+  <mat-card>
+    <mat-card-content>
+      <mat-card-title>{{'CITIES' | translate}}</mat-card-title>
+      <div class="row margin-bottom-2">
+        <div class="col-md-12">
+          <button type="button" mat-raised-button class="float-right add-button outline-unset"
+            (click)="editCity('0')">
+            <i class="material-icons add">add</i>
+            {{'ADD_NEW_CITY' | translate}}
+          </button>
+        </div>
+      </div>
+      <div class=row>
+        <div class="col-md">
+          <mat-form-field id="search-input" class="example-full-width">
+          <input matInput class="input" type="text" #SearchCityName="ngModel" [(ngModel)]="searchCityName" name="CityName"
+          placeholder="{{'CITY_NAME' | translate}}" (keydown.enter)="getCities()" />
+        </mat-form-field>
+        </div>
+        <div class="col-md">
+          <mat-form-field id="search-input" class="example-full-width">
+            <input matInput class="input" type="text" #SearchMunicipalityCode="ngModel" [(ngModel)]="searchMunicipalityCode" name="MunicipalityCode"
+              placeholder="{{'MUNICIPALITY_CODE' | translate}}" (keydown.enter)="getCities()" />
+          </mat-form-field>
+        </div>
+        <div class="col-md">
+          <arni-autocomplete #cantonComponent displayField="Name" name="Canton"
+            (onChange)="onSelectedCanton($event)" [items]="cantons" [selectedItem]="selectedCanton" (keydown.enter)="getCities()"
+            placeholder="{{'CANTON' | translate}}">
+          </arni-autocomplete>
+        </div>
+        <div class="col-md">
+          <mat-form-field id="search-input" class="example-full-width">
+          <input matInput class="input" type="text" #SearchPostCode="ngModel" [(ngModel)]="searchPostCode" name="PostCode"
+              placeholder="{{'POST_CODE' | translate}}" (keydown.enter)="getCities()" />
+          </mat-form-field>
+        </div>
+        <div class="col-md">
+          <button id="filter1-button" class="primary-button filter-button-mobile float-left" type="button" mat-raised-button
+            color="primary" (click)="getCities()"><i class="material-icons search">search</i>
+            {{'FILTER' | translate}}</button>
+        </div>
+      </div>
+      <p-table #dt [value]="cities" sortField="Name" [rowsPerPageOptions]="[10,20,30,40]" [responsive]="true" [paginator]="true"
+      sortOrder="-1" [rows]="10" [totalRecords]="totalCities"
+       (onLazyLoad)="loadCities($event)" [lazy]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th [pSortableColumn]="'Name'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'CITY_NAME' | translate}}
+          </th>
+          <th [pSortableColumn]="'MunicipalityCode'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'MUNICIPALITY_CODE' | translate}}
+          </th>
+          <th [pSortableColumn]="'CantonName'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'CANTON' | translate}}
+          </th>
+          <th [pSortableColumn]="'PostCode'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'POST_CODE' | translate}}
+          </th>
+          <th class="text-right">
+            {{'OPTIONS' | translate}}
+          </th>
+        </tr>
+      </ng-template>
+        <ng-template pTemplate="body" let-city>
+          <tr>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'CITY_NAME' | translate }}</span><span
+                class="float-right">{{city.Name}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'MUNICIPALITY_CODE' | translate }}</span><span
+                class="float-right">{{city.MunicipalityCode}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'CANTON' | translate }}</span><span
+                class="float-right">{{city.CantonName}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'POST_CODE' | translate }}</span><span
+                class="float-right">{{city.PostCode}}</span></td>
+            <td class="detail-icon"><span class="ui-column-title text-left float-left">{{ 'OPTIONS' | translate }}</span><i
+                  class="ti-pencil text-details m-r-7-negative" (click)="editCity(city.Id)"><span
+                  class="icon-text"> {{'DETAILS' | translate}}</span></i>
+              <i class="ti-trash text-danger m-r-7-negative" deleteConfirmation [deleteItemId]="city.Id"
+                  (onDelete)="onDelete($event)"><span class="icon-text">{{'DELETE'| translate}}</span></i>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+              <td [attr.colspan]="5" class="text-center">
+                  <strong>{{'NO_DATA_FOR_SELECTED_FILTERS' | translate}}</strong>
+              </td>
+          </tr>
+      </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>

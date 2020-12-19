@@ -1,0 +1,153 @@
+<div class="width-100">
+  <mat-card>
+    <mat-card-content>
+      <mat-card-title>{{'SKADENCA' | translate}}</mat-card-title>
+      <div class="row m-t-20">
+        <div class="col-md-3">
+          <form #skadencaForm="ngForm">
+            <mat-form-field class="form-field-width width-90-percents">
+              <input matInput [matDatepicker]="dp" #DateFrom="ngModel" placeholder="{{'MONTH_AND_YEAR_FROM' | translate}}"
+                name="dateFrom" id="dateFrom" [(ngModel)]="dateFrom" >
+              <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker id="dp" #dp startView="year" (monthSelected)="chosenFromMonthHandler($event, dp)">
+              </mat-datepicker>
+            </mat-form-field>
+            <div class="icon-position"><a (click)="clear('dateFrom')" class="cursor-pointer float-left"><i
+                  class="icon line-height-25">clear</i></a> </div>
+          </form>
+        </div>
+        <div class="col-md-3">
+          <form #skadencaForm="ngForm">
+            <mat-form-field class="form-field-width width-90-percents">
+              <input matInput [matDatepicker]="dpo" #DateTo="ngModel" placeholder="{{'MONTH_AND_YEAR_TO' | translate}}"
+                name="dateTo" id="dateTo" [(ngModel)]="dateTo">
+              <mat-datepicker-toggle matSuffix [for]="dpo"></mat-datepicker-toggle>
+              <mat-datepicker id="dpo" #dpo startView="year" (monthSelected)="chosenToMonthHandler($event, dpo)">
+              </mat-datepicker>
+            </mat-form-field>
+            <div class="icon-position"><a (click)="clear('dateTo')" class="cursor-pointer float-left"><i
+                  class="icon line-height-25">clear</i></a> </div>
+          </form>
+        </div>
+          <div class="col-md-3">
+            <arni-autocomplete #insuranceComponent displayField="Name" [items]="insurances" [selectedItem]="selectedInsurance"
+              (onChange)="onSelectedInsuranceChange($event)" placeholder="{{'INSURANCE_COMPANY' | translate}}" (click)="getInsurances()"
+              (keydown.enter)="refreshSkadenca()">
+            </arni-autocomplete>
+          </div>
+          <div class="col-md-3">
+            <arni-autocomplete #mainOfficeComponent displayField="Name" [items]="mainOffices" [selectedItem]="selectedMainOffice"
+              (onChange)="onSelectedMainOfficeChange($event)" placeholder="{{'MAIN_OFFICE' | translate}}" (click)="getMainOffices()"
+              (keydown.enter)="refreshSkadenca()">
+            </arni-autocomplete>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <arni-autocomplete #policyHoldersComponent displayField="DisplayName" name="policyHolder" (click)="getPolicyHolders()"
+            (onChange)="onSelectedPolicyHolderChange($event)" [items]="policyHolders" [selectedItem]="selectedPolicyHolder"
+            (keydown.enter)="refreshSkadenca()" placeholder="{{'POLICY_HOLDER_SEARCH' | translate}}">
+          </arni-autocomplete>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field id="search-input" class="example-full-width">
+              <input matInput class="input" type="text" #searchText="ngModel" [(ngModel)]="SearchText" name="PolicyNumber"
+                placeholder="{{'POLICY_NUMBER_SEARCH' | translate}}" (keydown.enter)="refreshSkadenca()" />
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <button id="filter1-button" class="primary-button filter-button-mobile" type="button" mat-raised-button color="primary"
+            (click)="refreshSkadenca()"><i class="material-icons search">search</i>
+              {{'FILTER' | translate}}</button>
+          </div>
+        </div>
+      <p-table #dt [value]="skadencas" [responsive]="true" [paginator]="true" sortOrder="-1"
+        sortField="PolicyExpiration" [totalRecords]="totalSkadenca" (onLazyLoad)="loadSkadencas($event)"
+        [rowsPerPageOptions]="[10,20,30,40,50]" [rows]="10" [lazy]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-right" [pSortableColumn]="'InsuranceName'">
+              <p-sortIcon [field]="'InsuranceName'"></p-sortIcon>
+              {{'INSURANCE_NAME' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'MainOfficeName'">
+              <p-sortIcon [field]="'MainOfficeName'"></p-sortIcon>
+              {{'MAIN_OFFICE_NAME' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PolicyHolderFullName'">
+              <p-sortIcon [field]="'PolicyHolderFullName'"></p-sortIcon>
+              {{'POLICY_HOLDER' | translate}}
+            </th>
+            <th class="text-right width-150-px" [pSortableColumn]="'PersonalIdentificationNumber'">
+              <p-sortIcon [field]="'PersonalIdentificationNumber'"></p-sortIcon>
+              {{'PERSONAL_IDENTIFICATION_NUMBER' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'Address'">
+              <p-sortIcon [field]="'Address'"></p-sortIcon>
+              {{'ADDRESS' | translate}}
+            </th>
+            <th class="text-right width-150-px" [pSortableColumn]="'CityName'">
+              <p-sortIcon [field]="'Address'"></p-sortIcon>
+              {{'CITY' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PolicyBegin'">
+              <p-sortIcon [field]="'PolicyBegin'"></p-sortIcon>
+              {{'BEGIN_DATE' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PolicyExpiration'">
+              <p-sortIcon [field]="'PolicyExpiration'"></p-sortIcon>
+              {{'DATE_OF_EXPIRATION' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'Number'">
+              <p-sortIcon [field]="'Number'"></p-sortIcon>
+              {{'POLICY_NUMBER' | translate}}
+            </th>
+            <th class="text-right width-80-px" [pSortableColumn]="'InsuranceType'">
+              <p-sortIcon [field]="'InsuranceType'"></p-sortIcon>
+              {{'INSURANCE_TYPE_SHORT' | translate}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-skadenca let-i="rowIndex">
+          <tr>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'INSURANCE_NAME' | translate }}</span><span
+                class="float-right">{{skadenca.InsuranceName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'MAIN_OFFICE_NAME' | translate}}</span><span
+                class="float-right">{{skadenca.MainOfficeName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'POLICY_HOLDER' | translate }}</span><span
+                class="float-right">{{skadenca.PolicyHolderFullName == null ? skadenca.CompanyName : skadenca.PolicyHolderFullName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'PERSONAL_IDENTIFICATION_NUMBER' | translate }}</span><span
+                class="float-right">{{skadenca.PersonalIdentificationNumber}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'ADDRESS' | translate }}</span><span
+                class="float-right">{{skadenca.Address}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'CITY' | translate }}</span><span
+                class="float-right">{{skadenca.CityName}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'BEGIN_DATE' | translate }}</span><span
+                class="float-right">{{skadenca.PolicyBegin | dateFormat}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'DATE_OF_EXPIRATION' | translate }}</span><span
+                class="float-right">{{skadenca.PolicyExpiration | dateFormat}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'POLICY_NUMBER' | translate }}</span><span
+                class="float-right">{{skadenca.Number}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'INSURANCE_TYPE_SHORT' | translate }}</span><span
+                class="float-right">{{skadenca.InsuranceType}}</span></td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="10" class="text-center">
+              <strong>{{'NO_DATA' | translate}}</strong>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>

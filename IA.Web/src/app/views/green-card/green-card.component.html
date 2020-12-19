@@ -1,0 +1,107 @@
+<div class="width-100">
+  <mat-card>
+    <mat-card-content>
+      <mat-card-title>{{'GREEN_CARDS' | translate}}</mat-card-title>
+      <div class="row margin-bottom-1">
+        <div class="col-md-12">
+          <button mat-raised-button class="float-right add-button outline-unset" (click)="addOrEditGreenCard('0')">
+            <i class="material-icons add">add</i>
+            {{'ADD_NEW_GREEN_CARD' | translate}}
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <mat-form-field id="search-input" class="example-full-width">
+            <input matInput class="input" type="text" #searchText="ngModel" [(ngModel)]="SearchText" name="SearchText"
+              placeholder="{{'GREEN_CARD_NUMBER' | translate}}" (keydown.enter)="refreshGreenCards()" />
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <arni-autocomplete #usersComponent displayField="AssignedToFullName" [items]="agents" [selectedItem]="selectedAgent"
+            (onChange)="onSelectedAgentChange($event)" placeholder="{{'ASSIGN_TO' | translate}}" (click)="getAgents()"
+            (keydown.enter)="refreshGreenCards()">
+          </arni-autocomplete>
+        </div>
+        <div class="col-md">
+          <mat-form-field>
+            <mat-select placeholder="{{'STATUS' | translate}}" type="text" #Status="ngModel" [(ngModel)]="filter.Status"
+              name="Status" id="Status">
+              <mat-option [value]="-1">
+                {{'ALL' | translate}}
+              </mat-option>
+              <mat-option *ngFor="let enum of greenCardStatus" [value]="enum.value">
+                {{enum.name | uppercase | translate}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md">
+          <button id="filter1-button" class="primary-button filter-button-mobile" type="button" mat-raised-button color="primary"
+          (click)="refreshGreenCards()"><i class="material-icons search">search</i>
+            {{'FILTER' | translate}}</button>
+        </div>
+      </div>
+      <p-table #dt [value]="greenCards" sortField="Added" [responsive]="true" [paginator]="true" [rows]="10" sortOrder="1"
+      [rowsPerPageOptions]="[10,20,30,40]" (onLazyLoad)="loadGreenCards($event)" [totalRecords]="totalGreenCards" [lazy]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th [pSortableColumn]="'Number'" class="text-right width-230-px">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'GREEN_CARD_NUMBER' | translate}}
+          </th>
+          <th [pSortableColumn]="'Added'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'ADDED' | translate}}
+          </th>
+          <th [pSortableColumn]="'AddedByFullName'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'ADDED_BY' | translate}}
+          </th>
+          <th [pSortableColumn]="'AssignedTo'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'ASSIGN_TO' | translate}}
+          </th>
+          <th [pSortableColumn]="'Status'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'STATUS' | translate}}
+          </th>
+          <th class="text-right">
+            {{'OPTIONS' | translate}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-greenCard>
+        <tr>
+          <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'NUMBER' | translate }}</span><span
+              class="float-right">{{greenCard.Number}}</span></td>
+              <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'ADDED' | translate }}</span><span
+                class="float-right">{{greenCard.Added | dateTimeFormat}}</span></td>
+          <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'PRICE' | translate }}</span><span
+              class="float-right">{{greenCard.AddedByFullName}}</span></td>
+              <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'ASSIGN_TO' | translate }}</span><span
+                class="float-right">{{greenCard.AssignedTo == " " ? '-' : greenCard.AssignedTo}}</span></td>
+              <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'STATUS' | translate }}</span><span
+                class="float-right">{{greenCardStatus[greenCard.Status].name | uppercase | translate}}</span></td>
+          <td class="detail-icon"><span class="ui-column-title text-left float-left">{{ 'OPTIONS' | translate }}</span><i
+            class="ti-pencil text-details m-r-7-negative" (click)="addOrEditGreenCard(greenCard.Id)"><span
+              class="icon-text"> {{'DETAILS' | translate}}</span></i>
+          <i class="ti-trash text-danger m-r-7-negative" deleteConfirmation [deleteItemId]="greenCard.Id"
+            (onDelete)="onDelete($event)"><span class="icon-text">{{'DELETE'| translate}}</span></i>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+            <td [attr.colspan]="6" class="text-center">
+                <strong>{{'NO_DATA' | translate}}</strong>
+            </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,90 @@
+<div class="width-100">
+  <mat-card>
+    <mat-card-content>
+      <mat-card-title>{{'POLICY_HOLDERS_PREVIEW' | translate}}</mat-card-title>
+      <div class="row margin-bottom-2">
+        <div class="col-md-12">
+          <button mat-raised-button class="float-right add-button outline-unset"
+            (click)="addOrEditPolicyHolder('0')">
+            <i class="material-icons add">add</i>
+            {{'ADD_NEW_POLICY_HOLDER' | translate}}
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="example-full-width">
+            <input matInput class="input" type="text" name="FullName" autocomplete="off" #searchText="ngModel"
+              [(ngModel)]="SearchText" placeholder="{{'SEARCH_BY_FULLNAME_OR_COMPANY_NAME' | translate}}"
+              (keydown.enter)="getPolicyHolders()" />
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <arni-autocomplete #citiesComponent displayField="CityNameMunicipalityCode" name="CityName" (onChange)="onSelectedCity($event)"
+            [items]="cities" [selectedItem]="selectedCity" (click)="getCities()" placeholder="{{'CITY_NAME' | translate}}"
+            (keydown.enter)="getPolicyHolders()">
+          </arni-autocomplete>
+        </div>
+        <div class="col-md">
+          <button id="filter1-button" class="primary-button filter-button-mobile" type="button" mat-raised-button (click)="getPolicyHolders()"
+            color="primary"><i class="material-icons search" >search</i>
+            {{'FILTER' | translate}}</button>
+        </div>
+      </div>
+      <p-table #dt [value]="policyHolders" [responsive]="true" [paginator]="true" sortOrder="-1" sortField="FirstName"
+        [totalRecords]="totalPolicyHolders" (onLazyLoad)="loadPolicyHolders($event)" [rowsPerPageOptions]="[10,20,30,40,50]"
+        [rows]="10" [lazy]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-right" [pSortableColumn]="'FirstName'">
+              <p-sortIcon [field]="'FirstName'"></p-sortIcon>
+              {{'POLICY_HOLDER_FULL_NAME_OR_COMPANY_NAME' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PersonalIdentificationNumber'">
+              <p-sortIcon [field]="'PersonalIdentificationNumber'"></p-sortIcon>
+              {{'PERSONAL_IDENTIFICATION_NUMBER_OR_ID_NUMBER' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'Address'">
+              <p-sortIcon [field]="'Address'"></p-sortIcon>
+              {{'ADDRESS' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'CityName'">
+              <p-sortIcon [field]="'CityName'"></p-sortIcon>
+              {{'CITY_NAME' | translate}}
+            </th>
+            <th class="text-right">
+              {{'OPTIONS' | translate}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-policyHolder>
+          <tr>
+            <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'POLICY_HOLDER_FULL_NAME' | translate }}</span><span class="float-right">{{policyHolder.PolicyHolderType == 0 ? policyHolder.FullName : policyHolder.CompanyName}}</span></td>
+            <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'PERSONAL_IDENTIFICATION_NUMBER' | translate }}</span><span class="float-right">{{policyHolder.PersonalIdentificationNumber}}</span></td>
+            <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'ADDRESS' | translate }}</span><span class="float-right">{{policyHolder.Address}}</span></td>
+            <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'CITY_NAME' | translate }}</span><span class="float-right">{{policyHolder.CityName}}</span></td>
+            <td class="detail-icon"><span
+              class="ui-column-title text-left float-left">{{ 'OPTIONS' | translate }}</span>
+              <i class="ti-pencil text-details m-r-7-negative" (click)="addOrEditPolicyHolder(policyHolder.Id)">
+                <span class="icon-text">{{'DETAILS' | translate}}</span>
+              </i>
+              <i class="ti-trash text-danger m-r-7-negative" deleteConfirmation [deleteItemId]="policyHolder.Id"
+                (onDelete)="onDelete($event)"><span class="icon-text">{{'DELETE' | translate}}</span></i>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+              <td [attr.colspan]="5" class="text-center">
+                  <strong>{{'NO_DATA' | translate}}</strong>
+              </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>

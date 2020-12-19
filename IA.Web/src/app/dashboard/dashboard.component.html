@@ -1,0 +1,324 @@
+<div fxLayout="row wrap"  *ngxPermissionsOnly="['P_DASHBOARD_STATISTICS']">
+  <div fxFlex.gt-sm="25" fxFlex.gt-xs="100" fxFlex="100">
+      <mat-card>
+          <mat-card-content>
+              <div class="d-flex no-block">
+                  <div class="m-r-10 no-shrink">
+                      <button  mat-fab mat-card-icon class="shadow-none bg-inverse  bg-success outline-unset" (click)="goToAgents()">
+                          <mat-icon>person_add</mat-icon>
+                      </button>
+                  </div>
+                  <div>
+                      <h3 class="m-0">{{numberOfAgents}}</h3>
+                      <h6 class="text-muted m-0">{{'NUMBER_OF_AGENTS' | translate}}</h6>
+                  </div>
+
+              </div>
+          </mat-card-content>
+      </mat-card>
+  </div>
+  <div fxFlex.gt-sm="25" fxFlex.gt-xs="100" fxFlex="100">
+      <mat-card>
+          <mat-card-content>
+              <div class="d-flex no-block">
+                  <div class="m-r-10 no-shrink">
+                      <button mat-fab color="warn" mat-card-icon class="shadow-none  bg-warning outline-unset" (click)="goToPolicyHolders()">
+                          <mat-icon>people_alt</mat-icon>
+                      </button>
+                  </div>
+                  <div>
+                      <h3 class="m-0">{{numberOfPolicyHolders}}</h3>
+                      <h6 class="text-muted m-0">{{'NUMBER_OF_POLICY_HOLDERS' | translate}}</h6>
+                  </div>
+              </div>
+          </mat-card-content>
+      </mat-card>
+  </div>
+  <div fxFlex.gt-sm="25" fxFlex.gt-xs="100" fxFlex="100">
+      <mat-card>
+          <mat-card-content>
+              <div class="d-flex no-block">
+                  <div class="m-r-10 no-shrink">
+                      <button mat-fab color="accent" mat-card-icon class="shadow-none outline-unset"  (click)="goToPolicies()">
+                          <mat-icon>menu</mat-icon>
+                      </button>
+                  </div>
+                  <div>
+                      <h3 class="m-0">{{numberOfPolicies}}</h3>
+                      <h6 class="text-muted m-0">{{'POLICIES' | translate}}</h6>
+                  </div>
+
+              </div>
+          </mat-card-content>
+      </mat-card>
+  </div>
+  <div fxFlex.gt-sm="25" fxFlex.gt-xs="100" fxFlex="100">
+      <mat-card>
+          <mat-card-content>
+              <div class="d-flex no-block">
+                  <div class="m-r-10 no-shrink">
+                      <button mat-fab color="warn" mat-card-icon class="shadow-none bg-danger outline-unset cursor-auto">
+                          <mat-icon>content_paste</mat-icon>
+                      </button>
+                  </div>
+                  <div>
+                      <h3 class="m-0">{{numberOfActivePolicyNumbers}}</h3>
+                      <h6 class="text-muted m-0">{{'ACTIVE_POLICIES' | translate}}</h6>
+                  </div>
+
+              </div>
+          </mat-card-content>
+      </mat-card>
+  </div>
+</div>
+
+<div fxLayout="row wrap" *ngxPermissionsOnly="['P_POLICIES_DASHBOARD']">
+  <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+    <mat-card>
+      <mat-card-content>
+        <mat-card-title>{{'POLICIES' | translate}}</mat-card-title>
+        <br>
+        <br>
+        <br>
+
+        <p-table #dt [value]="policies" [rowsPerPageOptions]="[5,10,20,50,100]"
+          [responsive]="true" [paginator]="true" sortOrder="1" [rows]="5">
+          <ng-template pTemplate="header">
+            <tr>
+              <th [pSortableColumn]="'InsuranceName'" class="text-right width-150-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'INSURANCE_COMPANY' | translate}}
+              </th>
+              <th [pSortableColumn]="'PolicyHolder'" class="text-right width-120-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'POLICY_HOLDER_INFO' | translate}}
+              </th>
+              <th [pSortableColumn]="'PolicyNumber'" class="text-right width-120-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'POLICY_NUMBER' | translate}}
+              </th>
+              <th [pSortableColumn]="'InsuranceTypeLabel'" class="text-right width-60-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'VRO' | translate}}
+              </th>
+              <th [pSortableColumn]="'UserFullName'" class="text-right width-120-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'ADDED_BY' | translate}}
+              </th>
+              <th [pSortableColumn]="'Created'" class="text-right width-140-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'CREATED_DATE' | translate}}
+              </th>
+              <th [pSortableColumn]="'PolicyExpiration'" class="text-right width-120-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'DATE_OF_EXPIRATION' | translate}}
+              </th>
+              <th class="text-right width-60-px">
+                {{'OPTIONS' | translate}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-policy>
+            <tr [class.color-red]="policy.PolicyExpiration<=threeDaysBeforeToday"
+            [class.font-weight-bold]="policy.PolicyExpiration<=threeDaysBeforeToday">
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'INSURANCE_COMPANY' | translate }}</span><span
+                  class="float-right">{{policy.InsuranceName}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'POLICY_HOLDER_INFO' | translate }}</span><span
+                  class="float-right">{{policy.PolicyHolder == null? policy.CompanyName : policy.PolicyHolder}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'POLICY_NUMBER' | translate }}</span><span
+                  class="float-right">{{policy.PolicyNumber}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'INSURANCE_TYPES' | translate }}</span><span
+                  class="float-right">{{policy.InsuranceTypeLabel}}</span></td>
+                  <td class="text-right"><span
+                    class="ui-column-title text-left float-left">{{ 'ADDED_BY' | translate }}</span><span
+                    class="float-right">{{policy.UserFullName}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'CREATED_DATE' | translate }}</span><span
+                  class="float-right">{{policy.Created | dateTimeFormat}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'DATE_OF_EXPIRATION' | translate }}</span><span
+                  class="float-right">{{policy.PolicyExpiration | dateFormat}}</span></td>
+              <td class="detail-icon"><span
+                  class="ui-column-title text-left float-left">{{ 'OPTIONS' | translate }}</span><i
+                  class="ti-pencil text-details m-r-7-negative" (click)="addOrEditPolicy(policy.Id)"><span
+                    class="icon-text">{{'DETAILS'| translate}}</span></i>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="8" class="text-center">
+                <strong>{{'NO_DATA_FOR_SELECTED_FILTERS' | translate}}</strong>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+<div  *ngxPermissionsOnly="['P_AGENT_DASHBOARD_POLICY_PAYMENTS']">
+<mat-card>
+  <mat-card-content>
+    <mat-card-title style="margin-bottom: 30px !important;">{{'POLICY_HOLDER_PAYMENTS' | translate}}</mat-card-title>
+    <p-table #dt [value]="expectedPayments" [rowsPerPageOptions]="[5,10,20,50,100]" [responsive]="true"
+      [paginator]="true" [rows]="5"
+      [globalFilterFields]="['InsuranceName','MainOfficeName','PolicyNumber','InsuranceTypeLabel','PolicyPrice']">
+      <ng-template pTemplate="header">
+        <tr>
+          <th [pSortableColumn]="'InsuranceName'" class="text-right width-215-px">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'INSURANCE_COMPANY' | translate}}
+          </th>
+          <th [pSortableColumn]="'MainOfficeName'" class="text-right ">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'MAIN_OFFICE' | translate}}
+          </th>
+          <th [pSortableColumn]="'PolicyHolderFullName'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'POLICY_HOLDER_INFO' | translate}}
+          </th>
+          <th [pSortableColumn]="'PolicyNumber'" class="text-right ">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'POLICY_NUMBER' | translate}}
+          </th>
+          <th [pSortableColumn]="'PolicyPrice'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'AMOUNT' | translate}}
+          </th>
+          <th [pSortableColumn]="'RemainingDebt'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'REMAINING_DEBT' | translate}}
+          </th>
+          <th [pSortableColumn]="'NumberOfInstallments'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'INSTALLMENTS' | translate}}
+          </th>
+          <th [pSortableColumn]="'ExpectedPaymentDate'" class="text-right">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'EXPECTED_PAYMENT_DATE' | translate}}
+          </th>
+          <th class="text-right width-80-px">
+            {{'OPTIONS' | translate}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-payment>
+        <tr [class.color-red]="payment.ExpectedPaymentDate <= today">
+          <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'INSURANCE_COMPANY' | translate }}</span><span
+              class="float-right">{{payment.InsuranceName}}</span></td>
+          <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'MAIN_OFFICE' | translate }}</span><span
+              class="float-right">{{payment.MainOfficeName}}</span></td>
+          <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'POLICY_HOLDER_INFO' | translate }}</span><span
+              class="float-right">{{payment.PolicyHolderFullName}}</span></td>
+          <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'POLICY_NUMBER' | translate }}</span><span
+              class="float-right">{{payment.PolicyNumber}}</span></td>
+          <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'POLICY_PRICE' | translate }}</span><span
+              class="float-right">{{payment.PolicyPrice}}</span></td>
+          <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'REMAINING_DEBT' | translate }}</span><span
+              class="float-right">{{payment.RemainingDebt}}</span></td>
+          <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'INSTALLMENTS' | translate }}</span><span
+              class="float-right">{{payment.NumberOfInstallments}}</span></td>
+          <td class="text-right"><span
+              class="ui-column-title text-left float-left">{{ 'EXPECTED_PAYMENT_DATE' | translate }}</span><span
+              class="float-right">{{payment.ExpectedPaymentDate | dateFormat}}</span></td>
+          <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'OPTIONS' | translate }}</span>
+            <i class="ti-pencil text-details m-r-7-negative" (click)="goToPolicyPayment(payment.PolicyId)"><span
+                class="icon-text">{{'DETAILS'| translate}}</span></i></td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td  [attr.colspan]="9" class="text-center">
+            <strong>{{'NO_DATA' | translate}}</strong>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </mat-card-content>
+</mat-card>
+</div>
+
+
+<div fxLayout="row wrap" *ngxPermissionsOnly="['P_SKADENCA_DASHBOARD']">
+  <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+    <mat-card>
+      <mat-card-content>
+        <mat-card-title>{{'SKADENCA' | translate}}</mat-card-title>
+        <br>
+
+
+<p-table #dt [value]="skadencas" [responsive]="true" [paginator]="true" sortOrder="-1"
+        sortField="PolicyExpiration" [totalRecords]="totalSkadenca" (onLazyLoad)="loadSkadencas($event)"
+        [rowsPerPageOptions]="[5,10,20,30,40,50]" [rows]="5" [lazy]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-right" [pSortableColumn]="'InsuranceName'">
+              <p-sortIcon [field]="'InsuranceName'"></p-sortIcon>
+              {{'INSURANCE_COMPANY' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'MainOfficeName'">
+              <p-sortIcon [field]="'MainOfficeName'"></p-sortIcon>
+              {{'MAIN_OFFICE' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PolicyHolderFullName'">
+              <p-sortIcon [field]="'PolicyHolderFullName'"></p-sortIcon>
+              {{'POLICY_HOLDER' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'CityName'">
+              <p-sortIcon [field]="'CityName'"></p-sortIcon>
+              {{'CITY' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'Number'">
+              <p-sortIcon [field]="'Number'"></p-sortIcon>
+              {{'POLICY_NUMBER' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PolicyExpiration'">
+              <p-sortIcon [field]="'PolicyExpiration'"></p-sortIcon>
+              {{'DATE_OF_EXPIRATION' | translate}}
+            </th>
+
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-skadenca let-i="rowIndex">
+          <tr>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'INSURANCE_NAME' | translate }}</span><span
+                class="float-right">{{skadenca.InsuranceName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'MAIN_OFFICE_NAME' | translate}}</span><span
+                class="float-right">{{skadenca.MainOfficeName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'POLICY_HOLDER' | translate }}</span><span
+                class="float-right">{{skadenca.PolicyHolderFullName == null ? skadenca.CompanyName : skadenca.PolicyHolderFullName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'CITY' | translate }}</span><span
+                class="float-right">{{skadenca.CityName}}</span></td>
+                <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'POLICY_NUMBER' | translate }}</span><span
+                  class="float-right">{{skadenca.Number}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'DATE_OF_EXPIRATION' | translate }}</span><span
+                class="float-right">{{skadenca.PolicyExpiration | dateFormat}}</span></td>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="6" class="text-center">
+              <strong>{{'NO_DATA' | translate}}</strong>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

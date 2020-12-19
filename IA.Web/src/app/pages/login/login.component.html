@@ -1,0 +1,37 @@
+<div class="login-register" style="background-image:url(assets/images/background/insurancebg3.png);">
+  <div class="login-register-box">
+      <mat-card class="m-t-10 border-radius-30px">
+      <mat-card-content>
+      <form class="form" #loginForm="ngForm" (ngSubmit)="Login(loginForm)">
+          <div class="text-center">
+              <img alt="homepage" class="logo" src="assets/images/browser/granem-logo.png">
+              <h4 class="m-t-0">{{'LOGIN_TO_POD' | translate}}</h4>
+          </div>
+          <div fxLayout="row wrap">
+              <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                  <mat-form-field class="padding-0">
+                  <input matInput type="text" id="Username" name="Username"  #Username="ngModel" [(ngModel)]="username"
+                  class="form-control border-none"   placeholder="{{'USERNAME'| translate}}" autocomplete="off" required style="text-transform: none !important;">
+                  </mat-form-field>
+                  <div *ngFor="let err of validationErrors?.Username">
+                    <span class="help-block text-danger">{{ err }}</span>
+                  </div>
+              </div>
+              <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                  <mat-form-field class="padding-0">
+                  <input matInput type="password" id="Password" name="Password"  #Password="ngModel" [(ngModel)]="password"
+                  class="form-control border-none" placeholder="{{'PASSWORD' | translate}}"  autocomplete="off" required>
+                  </mat-form-field>
+                  <div *ngFor="let err of validationErrors?.Password">
+                    <span class="help-block text-danger">{{ err }}</span>
+                  </div>
+              </div>
+              <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                  <button [disabled]="(!username || !password)" mat-raised-button color="primary" class="btn-block btn-lg m-t-20 m-b-20 outline-unset"  type="submit">{{'LOGIN' | translate}}</button>
+              </div>
+          </div>
+      </form>
+    </mat-card-content>
+      </mat-card>
+  </div>
+</div>

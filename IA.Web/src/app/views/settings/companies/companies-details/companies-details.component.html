@@ -1,0 +1,145 @@
+  <div class="row pl-3">
+  <div class="col-md-12">
+    <button type="button" mat-raised-button color="primary" class="button-back outline-unset" (click)="back()"><i
+        class="material-icons reply">reply</i>
+      {{'BACK' | translate}}</button>
+    </div>
+  </div>
+  <form #form="ngForm" (ngSubmit)="addCompany(form)" class="m-t-20">
+    <div class="row">
+      <div class="col-md-12">
+        <mat-card>
+          <mat-card-content>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-card-title>{{'COMPANY_INFO' | translate}}</mat-card-title>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-form-field class="example-full-width">
+                  <input type="text" required matInput #Name="ngModel" [(ngModel)]="company.Name" name="Name"
+                    placeholder="{{'MAIN_OFFICE_NAME' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.Name">
+                  <span class="help-block text-danger">{{ err }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-form-field class="example-full-width">
+                  <input type="text" required matInput #StreetAddress="ngModel" [(ngModel)]="company.StreetAddress"
+                    name="StreetAddress" placeholder="{{'STREET_ADDRESS' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.StreetAddress">
+                  <span class="help-block text-danger">{{ err }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-form-field class="example-full-width">
+                  <input type="text" required matInput #IdNumber="ngModel" [(ngModel)]="company.IdNumber"
+                    name="IdNumber" placeholder="{{'ID_NUMBER' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.IdNumber">
+                  <span class="help-block text-danger">{{ err }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-form-field class="example-full-width">
+                  <input type="text" required matInput #Email="ngModel" [(ngModel)]="company.Email" name="Email"
+                    placeholder="{{'EMAIL' | translate}}"  pattern="^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$" style="text-transform: none !important;">
+                </mat-form-field>
+                <div *ngIf="Email.errors?.pattern">
+                  <span class="help-block text-danger"> {{'EMAIL_FORMAT_ERROR' | translate}} </span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-form-field class="example-full-width">
+                  <input type="text" required matInput #PhoneNumber="ngModel" [(ngModel)]="company.PhoneNumber"
+                    name="PhoneNumber" placeholder="{{'PHONE_NUMBER' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.PhoneNumber">
+                  <span class="help-block text-danger">{{ err }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-form-field class="example-full-width">
+                  <input type="text" required matInput #WebAddress="ngModel" [(ngModel)]="company.WebAddress"
+                    name="WebAddress" placeholder="{{'WEB_ADDRESS' | translate}}" style="text-transform: none !important;">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.WebAddress">
+                  <span class="help-block text-danger">{{ err }}</span>
+                </div>
+              </div>
+            </div>
+              <arni-autocomplete #citiesComponent displayField="CityNameMunicipalityCode" name="CityName" (onChange)="onSelectedCity($event)"
+              [items]="cities" [selectedItem]="selectedCity" #CityId="ngModel" [(ngModel)]="company.CityId" (click)="getCities()" placeholder="{{'CITY_NAME' | translate}}" >
+            </arni-autocomplete>
+            <div *ngFor="let err of validationErrors?.CityName">
+              <span class="help-block text-danger">{{ err }}</span>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button type="submit" class="outline-unset" mat-raised-button color="primary" name="add"><i
+                    class="material-icons check">check</i>
+                  {{'SAVE' | translate}}</button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </form>
+  <div class="row" >
+    <div class="col-md-12">
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title>{{'INSURANCE_COMPANIES_PREVIEW' | translate}}</mat-card-title>
+          <br>
+          <p-table #dt [value]="companiesInsurances" [responsive]="true" [paginator]="true" rows="5"
+          [rowsPerPageOptions]="[5,10,20,30]">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="text-right" [pSortableColumn]="'InsuranceName'">
+                  <p-sortIcon [field]="'InsuranceName'"></p-sortIcon>
+                  {{'INSURANCE_COMPANY_INFO' | translate}}
+                </th>
+                <th class="text-right">
+                  {{'DETAILS' | translate}}
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-companyInsurance>
+              <tr>
+                <td class="text-right"><span
+                    class="ui-column-title text-left float-left">{{ 'INSURANCE_COMPANY_INFO' | translate }}</span><span
+                    class="float-right">{{companyInsurance.InsuranceName}}</span>
+                </td>
+                <td class="detail-icon"><span class="ui-column-title text-left float-left">{{ 'DETAILS' | translate }}</span><i
+                    class="ti-pencil text-info float-right m-r-7-negative"
+                    (click)="editInsuranceCompany(companyInsurance.InsuranceId)"><span class="icon-text">
+                      {{'DETAILS' | translate}}</span></i></td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                  <td [attr.colspan]="2" class="text-center">
+                      <strong>{{'NO_ADDED_MAIN_OFFICES' | translate}}</strong>
+                  </td>
+              </tr>
+          </ng-template>
+          </p-table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>

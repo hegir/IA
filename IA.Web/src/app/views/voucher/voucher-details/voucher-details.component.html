@@ -1,0 +1,72 @@
+<div class="width-100">
+  <div class="col-md-12">
+    <button type="button" mat-raised-button color="primary" class="button-back outline-unset" (click)="back()"><i
+        class="material-icons reply">reply</i>
+      {{'BACK' | translate}}</button>
+  </div>
+  <form #form="ngForm" (ngSubmit)="add(form)" autocomplete="off" class="m-t-20">
+    <div class="row">
+      <div class="col-md-12">
+        <mat-card>
+          <mat-card-content>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-card-title>{{'DETAILS' | translate}}</mat-card-title>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-md-12">
+                <arni-autocomplete required onkeypress="return (event.charCode != 32)"
+                oninput="validity.valid||(value='');" #partnerComponent displayField="Name" name="Partner"
+                id="City" (onChange)="onSelectedPartnerChanged($event)" [items]="partners" [selectedItem]="selectedPartner"
+                placeholder="{{'PARTNERS' | translate}} *">
+              </arni-autocomplete>
+                <div *ngFor="let err of validationErrors?.Partner">
+                  <span class="help-block text-danger">{{ err }}</span>
+                </div>
+                <mat-form-field>
+                  <input type="number" required matInput #Amount="ngModel" [(ngModel)]="voucher.Amount" name="Amount"
+                    placeholder="{{'AMOUNT' | translate}} (KM)">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.Amount">
+                  <span class="help-block text-danger">{{err}}</span>
+                </div>
+                <mat-form-field class="example-full-width">
+                  <input [disabled]="show" type="text" matInput #IdNumber="ngModel" [(ngModel)]="voucher.Number" name="Number"
+                    placeholder="{{'VOUCHER_NUMBER' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.Number">
+                  <span class="help-block text-danger">{{ err }}</span>
+                </div>
+                <mat-checkbox *ngIf="isNewVoucher" color="primary" class="m-r-10" name="range" (change)="showRange($event)" [(ngModel)]="voucherNumbersRange">{{"ADD_MORE_VOUCHERS" | translate}}</mat-checkbox>
+                <mat-form-field *ngIf="show" class="example-full-width">
+                  <input type="text"  required  matInput #Min="ngModel" [(ngModel)]="numberFrom" name="From" id="From"
+                    placeholder="{{'VOUCHER_NUMBER_FROM' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.From">
+                  <span *ngIf="show" class="help-block text-danger">{{ err }}</span>
+                </div>
+                <mat-form-field  *ngIf="show" class="example-full-width">
+                  <input  type="text" required matInput #To="ngModel" [(ngModel)]="numberTo" name="To"
+                    placeholder="{{'VOUCHER_NUMBER_TO' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.To">
+                  <span *ngIf="show" class="help-block text-danger">{{ err }}</span>
+                </div>
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button type="submit" [disabled]="form.invalid" class="outline-unset" mat-raised-button color="primary" name="add"><i
+                    class="material-icons check">check</i>
+                  {{'SAVE' | translate}}</button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </form>
+</div>
+

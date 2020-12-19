@@ -1,0 +1,124 @@
+<div class="width-100">
+  <mat-card>
+    <mat-card-content>
+      <mat-card-title class="m-b-10">{{'POLICY_NUMBER_STATUS_REPORT' | translate}}
+      </mat-card-title>
+      <br>
+      <div class="row m-t-10">
+        <div class="col-md-2">
+          <form>
+            <mat-form-field class="form-field-width width-90-percents">
+              <input matInput [matDatepicker]="dp" disabled #DateFrom="ngModel"
+                placeholder="{{'DATE_FROM' | translate}}" name="dateFrom" id="dateFrom" [(ngModel)]="filter.DateFrom"
+                (dateChange)="chosenFromMonthHandler(dp)">
+              <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker id="dp" #dp disabled="false">
+              </mat-datepicker>
+            </mat-form-field>
+            <div class="icon-position"><a (click)="clear('DateFrom')" class="cursor-pointer"><i
+                  class="icon line-height-25">clear</i></a> </div>
+          </form>
+        </div>
+        <div class="col-md-2">
+          <form>
+            <mat-form-field class="form-field-width width-90-percents">
+              <input matInput [matDatepicker]="dpo" disabled #DateTo="ngModel" placeholder="{{'DATE_TO' | translate}}"
+                name="dateTo" id="dateTo" [(ngModel)]="filter.DateTo" (dateChange)="chosenToMonthHandler(dpo)">
+              <mat-datepicker-toggle matSuffix [for]="dpo"></mat-datepicker-toggle>
+              <mat-datepicker #dpo disabled="false">
+              </mat-datepicker>
+            </mat-form-field>
+            <div class="icon-position"><a (click)="clear('DateTo')" class="cursor-pointer"><i
+                  class="icon line-height-25">clear</i></a> </div>
+          </form>
+        </div>
+        <div class="col-md-2">
+          <arni-autocomplete #insurancesComponent displayField="Name" name="InsuranceName"
+            (keyup.enter)="refreshReport()" (onChange)="onSelectedInsurance($event)" [items]="insurances"
+            [selectedItem]="selectedInsurance" placeholder="{{'INSURANCE_SEARCH' | translate}}">
+          </arni-autocomplete>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field class="example-full-width">
+            <input matInput class="input" type="text" name="PolicyNumber" autocomplete="off" #searchText="ngModel"
+            (keyup.enter)="refreshReport()" [(ngModel)]="SearchText"
+            placeholder="{{'POLICY_NUMBER' | translate}}" />
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field>
+            <mat-select  placeholder="{{'STATUS' | translate}}" type="text" #Status="ngModel" [(ngModel)]="filter.Status"
+            name="Status" id="Status">
+            <mat-option [value]="-1">
+              {{'ALL' | translate}}
+            </mat-option>
+            <mat-option *ngFor="let enum of policyNumberStatus" [value]="enum.value">
+              {{enum.name | uppercase | translate}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-2">
+        <button id="filter1-button" class="primary-button filter-button-mobile" type="button" mat-raised-button
+        (click)="refreshReport()" color="primary"><i class="material-icons search">search</i>
+        {{'FILTER' | translate}}</button>
+      </div>
+    </div>
+      <p-table #dt [value]="obligatedDischargedPolicyNumbers" [responsive]="true" [paginator]="true" sortOrder="1"
+        sortField="PolicyNumberAdded" [totalRecords]="totalReports" (onLazyLoad)="loadSpecifications($event)"
+        [rowsPerPageOptions]="[10,20,30,40,50]" [rows]="10" [lazy]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-right" style="width: 40px">
+              {{'RB'| translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'InsuranceName'">
+              <p-sortIcon [field]="'InsuranceName'"></p-sortIcon>
+              {{'INSURANCE_NAME' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PolicyNumber'">
+              <p-sortIcon [field]="'PolicyNumber'"></p-sortIcon>
+              {{'POLICY_NUMBER' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PolicyNumberAdded'">
+              <p-sortIcon [field]="'PolicyNumberAdded'"></p-sortIcon>
+              {{'ADDED' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'Status'">
+              <p-sortIcon [field]="'Status'"></p-sortIcon>
+              {{'STATUS' | translate}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-obligatedDischargedPolicyNumber let-i="rowIndex">
+          <tr>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'RB' | translate }}</span>
+              {{i+1}}
+            </td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'INSURANCE_NAME' | translate }}</span><span
+                class="float-right">{{obligatedDischargedPolicyNumber.InsuranceName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'POLICY_NUMBER' | translate }}</span><span
+                class="float-right">{{obligatedDischargedPolicyNumber.PolicyNumber}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'ADDED' | translate }}</span><span
+                class="float-right">{{obligatedDischargedPolicyNumber.PolicyNumberAdded | dateTimeFormat}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'STATUS' | translate }}</span><span
+                class="float-right">{{policyNumberStatus[obligatedDischargedPolicyNumber.Status].name | uppercase | translate}}</span></td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="5" class="text-center">
+              <strong>{{'NO_DATA' | translate}}</strong>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>
+

@@ -1,0 +1,220 @@
+<div class="width-100">
+  <div class="col-md-12">
+    <button type="button" mat-raised-button color="primary" class="button-back outline-unset" (click)="back()"><i
+        class="material-icons reply">reply</i>
+      {{'BACK' | translate}}</button>
+  </div>
+  <form #form="ngForm" (ngSubmit)="add(form)" autocomplete="off" class="m-t-20" *ngIf="policy.RemainingDebt != 0 || policy.TotalPaymentPrice == 0">
+    <div class="row">
+      <div class="col-md-12">
+        <mat-card>
+          <mat-card-content>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-card-title>{{'POLICY_PAYMENT_DETAILS' | translate}}</mat-card-title>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-md-12">
+                <mat-form-field  class="example-full-width">
+                  <input required type="number" [disabled]="disableTotalPremiumPrice || policy.TotalPaymentPrice > 0"  matInput #TotalPaymentPrice="ngModel" [(ngModel)]="totalPaymentPrice" name="TotalPaymentPrice"
+                    placeholder="{{'TOTAL_PAYMENT_PRICE' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.TotalPaymentPrice">
+                  <span class="help-block text-danger">{{ err }}</span>
+                </div>
+                <mat-form-field class="example-full-width">
+                  <mat-select  required [disabled]="disableButton || (policy.Payment == 1 && policy.NumberOfInstallment > 0)"  #PaymentMethod="ngModel" [(ngModel)]="payment" name="PaymentMethod"
+                    placeholder="{{'PAYMENT_METHOD' | translate}}" (selectionChange)="changePaymentMethod($event)">
+                    <mat-option *ngFor="let enum of paymentMethod" [value]="enum.value">
+                      {{enum.name | uppercase | translate}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.PaymentMethod">
+                  <span  class="help-block text-danger">{{ err }}</span>
+                </div>
+                <mat-form-field  class="example-full-width">
+                  <input [disabled]="disableButton || (price == totalPaymentPrice && payment == 0)" required  type="number"  matInput #Amount="ngModel" min="0" [(ngModel)]="price" name="Amount"  onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                  maxlength = "10" placeholder="{{'AMOUNT' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.Amount">
+                  <span  class="help-block text-danger">{{ err }}</span>
+                </div>
+                <div fxLayout="row wrap">
+                  <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                    <mat-form-field>
+                      <input [disabled]="disableButton" required matInput [matDatepicker]="picker" type="text" #PaymentDate="ngModel"
+                        [(ngModel)]="date" name="PaymentDate" placeholder="{{'PAYMENT_DATE' | translate}}" (click)="showDatePicker(picker)">
+                      <mat-datepicker-toggle matSuffix [for]="picker" ></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                     <div *ngFor="let err of validationErrors?.PaymentDate">
+                  <span  class="help-block text-danger">{{ err }}</span>
+                </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <mat-form-field  class="example-full-width" *ngIf="payment == 1">
+                      <input [disabled]="disableButton" type="number" required min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57"  matInput #Installment="ngModel" [(ngModel)]="numberOfInstallments" name="Installment"
+                      oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                      maxlength = "10" placeholder="{{'NUMBER_OF_INSTALLMENTS' | translate}}" >
+                    </mat-form-field>
+                    <div *ngFor="let err of validationErrors?.Installment">
+                      <span  class="help-block text-danger">{{ err }}</span>
+                    </div>
+                  </div>
+                    <div class="col-md-6" *ngIf="payment == 1">
+                      <div fxLayout="row wrap">
+                        <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                          <mat-form-field>
+                            <input [disabled]="disableButton" required matInput [matDatepicker]="picker1" type="text" #ExpectedPaymentDate="ngModel"
+                              [(ngModel)]="expectedDate" name="ExpectedPaymentDate" placeholder="{{'EXPECTED_PAYMENT_RATE_DATE' | translate}}" (click)="showDatePicker(picker1)">
+                            <mat-datepicker-toggle matSuffix [for]="picker1" ></mat-datepicker-toggle>
+                            <mat-datepicker #picker1></mat-datepicker>
+                          </mat-form-field>
+                          <div *ngFor="let err of validationErrors?.ExpectedPaymentDate">
+                            <span  class="help-block text-danger">{{ err }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <mat-form-field  class="example-full-width">
+                  <input [disabled]="disableButton" type="text"  matInput #Note="ngModel" [(ngModel)]="policyPayment.Note" name="Note"
+                    placeholder="{{'NOTE' | translate}}">
+                </mat-form-field>
+                <div *ngFor="let err of validationErrors?.Note">
+                  <span  class="help-block text-danger">{{ err }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button [disabled]="disableButton" type="submit" class="outline-unset" mat-raised-button color="primary" name="add"><i
+                    class="material-icons check">check</i>
+                  {{'SAVE' | translate}}</button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </form>
+  <mat-card>
+    <mat-card-content>
+      <mat-card-title class="m-b-15">{{'HISTORY_OF_PAYMENTS' | translate}}</mat-card-title>
+      <p-table  #dt [value]="policyPayments"  [responsive]="true" [paginator]="true" [rows]="10" sortOrder="1" [rowsPerPageOptions]="[10,20,30,40]">
+        <ng-template pTemplate="header">
+          <tr>
+            <th [pSortableColumn]="'PaymentMethod'" class="text-right width-185-px">
+              <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+              {{'PAYMENT_METHOD' | translate}}
+            </th>
+            <th [pSortableColumn]="'Amount'" class="text-right width-100-px">
+              <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+              {{'AMOUNT' | translate}}
+            </th>
+            <th [pSortableColumn]="'Installment'" class="text-right width-185-px" *ngIf="policy.Payment != 0 && payment != 0">
+              <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+              {{'INSTALLMENTS' | translate}}
+            </th>
+            <th [pSortableColumn]="'PaymentDate'" class="text-right width-185-px">
+              <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+              {{'PAYMENT_DATE' | translate}}
+            </th>
+            <th [pSortableColumn]="'ExpectedPaymentDate'" class="text-right width-220-px" *ngIf="policy.Payment != 0 && payment != 0">
+              <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+              {{'EXPECTED_PAYMENT_RATE_DATE' | translate}}
+            </th>
+            <th [pSortableColumn]="'Note'" class="text-right">
+              <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+              {{'NOTE' | translate}}
+            </th>
+            <th [pSortableColumn]="'AddedBy'" class="text-right">
+              <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+              {{'ADDED_BY' | translate}}
+            </th>
+            <th [pSortableColumn]="'Added'" class="text-right">
+              <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+              {{'ADDED' | translate}}
+            </th>
+            <th *ngxPermissionsOnly="['P_POLICY_PAYMENT_RATE_DELETE']" class="text-right width-75-px">
+              {{'OPTIONS' | translate}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-pay>
+          <tr>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'PAYMENT_METHOD' | translate }}</span><span
+                class="float-right">{{paymentMethod[pay.PaymentMethod].name | uppercase | translate}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'AMOUNT' | translate }}</span><span
+                class="float-right">{{pay.Amount}} KM</span></td>
+            <td *ngIf="policy.Payment != 0 && payment != 0" class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'INSTALLMENTS' | translate }}</span><span
+                class="float-right">{{pay.Installment}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'PAYMENT_DATE' | translate }}</span><span
+                class="float-right">{{pay.PaymentDate | dateFormat}}</span></td>
+            <td *ngIf="policy.Payment != 0 && payment != 0" class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'EXPECTED_PAYMENT_DATE' | translate }}</span><span
+                class="float-right">{{pay.ExpectedPaymentDate | dateFormat}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'NOTE' | translate }}</span><span
+                class="float-right">{{pay.Note || '-'}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'ADDED_BY' | translate }}</span><span
+                class="float-right">{{pay.AddedByFullName}}</span></td>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'ADDED' | translate }}</span><span
+                class="float-right">{{pay.Added | dateTimeFormat}}</span></td>
+            <td *ngxPermissionsOnly="['P_POLICY_PAYMENT_RATE_DELETE']" class="detail-icon"><span class="ui-column-title text-left float-left">{{ 'OPTIONS' | translate }}</span>
+              <i class="ti-trash text-danger m-r-7-negative" deleteConfirmation [deleteItemId]="pay.Id"
+                (onDelete)="removePolicyPaymentRate($event)"><span class="icon-text">{{'DELETE'| translate}}</span></i>
+            </td>
+          </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+              <tr *ngIf="policy.Payment != 0 && payment != 0 && !isAdmin && policy.TotalPaymentPrice != 0">
+                <td [attr.colspan]="8" class="text-right"><span class="ui-column-title m-r-15">{{ 'REMAINING_DEBT' | translate }}</span><span
+                    class="float-right">{{sum}} KM</span></td>
+              </tr>
+              <tr *ngIf="payment != -1 && policy.Payment != 1 && !isAdmin && policy.TotalPaymentPrice != 0">
+                <td [attr.colspan]="6" class="text-right"><span class="ui-column-title m-r-15">{{ 'REMAINING_DEBT' | translate }}</span><span
+                    class="float-right">{{sum}} KM</span></td>
+              </tr>
+              <tr *ngIf="policy.Payment != 0 && payment != 0 && isAdmin && policy.TotalPaymentPrice != 0">
+                <td [attr.colspan]="9" class="text-right"><span class="ui-column-title m-r-15">{{ 'REMAINING_DEBT' | translate }}</span><span
+                    class="float-right">{{sum}} KM</span></td>
+              </tr>
+              <tr *ngIf="payment != -1 && policy.Payment != 1 && isAdmin && policy.TotalPaymentPrice != 0">
+                <td [attr.colspan]="7" class="text-right"><span class="ui-column-title m-r-15">{{ 'REMAINING_DEBT' | translate }}</span><span
+                    class="float-right">{{sum}} KM</span></td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr *ngIf="policy.Payment != 0 && payment != 0 && !isAdmin">
+                <td [attr.colspan]="8" class="text-center">
+                  <strong>{{'NO_DATA' | translate}}</strong>
+                </td>
+              </tr>
+              <tr *ngIf="payment == 0">
+                <td [attr.colspan]="6" class="text-center">
+                  <strong>{{'NO_DATA' | translate}}</strong>
+                </td>
+              </tr>
+              <tr *ngIf="payment == -1 && policy.Payment != 1 && isAdmin">
+                <td [attr.colspan]="7" class="text-center">
+                  <strong>{{'NO_DATA' | translate}}</strong>
+                </td>
+              </tr>
+              <tr *ngIf="policy.Payment != 0 && payment != 0 && isAdmin">
+                <td [attr.colspan]="9" class="text-center">
+                  <strong>{{'NO_DATA' | translate}}</strong>
+                </td>
+              </tr>
+            </ng-template>
+            </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>

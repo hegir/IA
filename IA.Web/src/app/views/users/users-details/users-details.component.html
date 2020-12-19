@@ -1,0 +1,333 @@
+<div class="width-99">
+  <div class="col-md-12">
+    <button type="button" mat-raised-button color="primary" class="button-back outline-unset" (click)="back()">
+      <i class="material-icons reply">reply</i>
+      {{'BACK' | translate}}
+    </button>
+  </div>
+  <mat-card>
+    <form #form="ngForm" (ngSubmit)="save(form)">
+      <div class="row">
+        <div class="col-md-6">
+          <mat-card>
+            <mat-card-content>
+              <mat-card-title class="p-b-20">{{'ADD_USER_INFO' | translate}}</mat-card-title>
+              <mat-form-field class="example-full-width">
+                <input [disabled]="isAgent" matInput required type="text" #FirstName="ngModel"
+                  [(ngModel)]="user.FirstName" name="FirstName" placeholder="{{'FIRST_NAME' | translate}}">
+              </mat-form-field>
+              <div *ngFor="let err of validationErrors?.FirstName">
+                <span class="help-block text-danger">{{ err }}</span>
+              </div>
+              <mat-form-field class="example-full-width">
+                <input [disabled]="isAgent" matInput required type="text" #LastName="ngModel"
+                  [(ngModel)]="user.LastName" name="LastName" placeholder="{{'LAST_NAME' | translate}}">
+              </mat-form-field>
+              <div *ngFor="let err of validationErrors?.LastName">
+                <span class="help-block text-danger">{{ err }}</span>
+              </div>
+              <div fxLayout="row wrap">
+                <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                  <mat-form-field>
+                    <input [disabled]="isAgent" matInput [matDatepicker]="picker" type="text" #BirthDate="ngModel"
+                      [(ngModel)]="user.BirthDate" name="BirthDate" placeholder="{{'BIRTH_DATE' | translate}}" (click)="showDatePicker(picker)">
+                    <mat-datepicker-toggle matSuffix [for]="picker" (monthSelected)="chosenMonthHandler(picker)"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+              <mat-form-field>
+                <mat-select [disabled]="isAgent" placeholder="{{'GENDER' | translate}}" type="text" required
+                  #Gender="ngModel" [(ngModel)]="user.Gender" name="Gender" id="Gender">
+                  <mat-option *ngFor="let enum of Genders" [value]="enum.value">
+                    {{enum.name | uppercase | translate}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div *ngFor="let err of validationErrors?.Gender">
+                <span class="help-block text-danger">{{ err }}</span>
+              </div>
+              <arni-autocomplete [disabled]="isAgent" #citiesComponent value="policyHolder.CityId"
+                displayField="CityNameMunicipalityCode" name="CityId" id="CityId" [items]="cities"
+                (onChange)="onSelectedCityChanged($event)" [selectedItem]="selectedCity"
+                placeholder="{{'CITY_NAME' | translate}}">
+              </arni-autocomplete>
+              <div *ngFor="let err of validationErrors?.CityId">
+                <span class="help-block text-danger"> {{ err }}</span>
+              </div>
+              <mat-form-field class="example-full-width">
+                <input [disabled]="isAgent" matInput type="text" #Adress="ngModel" [(ngModel)]="user.Address"
+                  name="Adress" placeholder="{{'LIVING_ADRESS' | translate}}">
+              </mat-form-field>
+              <mat-form-field class="example-full-width">
+                <input [disabled]="isAgent" matInput type="text" #PhoneNumber="ngModel" [(ngModel)]="user.PhoneNumber"
+                  name="PhoneNumber" placeholder="{{'PHONE_NUMBER' | translate}}" pattern="^[+]?[0-9]*$">
+              </mat-form-field>
+              <div *ngIf="PhoneNumber.errors?.pattern">
+                <span class="help-block text-danger">{{ 'PHONE_FORMAT_ERROR' | translate}}</span>
+              </div>
+              <mat-form-field class="example-full-width">
+                <input type="text" [disabled]="isAgent" matInput required #PersonalIdentificationNumber="ngModel"
+                  [(ngModel)]="user.PersonalIdentificationNumber"   onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="PersonalIdentificationNumber"
+                  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                  maxlength = "13"
+                  placeholder="{{'PERSONAL_IDENTIFICATION_NUMBER' | translate}}" pattern="^(\d{13})?$">
+              </mat-form-field>
+              <div *ngFor="let err of validationErrors?.PersonalIdentificationNumber">
+                <span class="help-block text-danger">{{err}}</span>
+              </div>
+              <div *ngIf="PersonalIdentificationNumber.errors?.pattern">
+                <span class="help-block text-danger">{{'PERSONAL_IDENTIFICATION_NUMBER_FORMAT_ERROR' | translate}}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="col-md-6">
+          <mat-card>
+            <mat-card-content>
+              <mat-card-title class="p-b-20">{{"USER_ACCOUNT_INFO" | translate}}</mat-card-title>
+              <button *ngIf="isAgent" mat-raised-button name="back" type="button"
+                class="float-right bg-warning outline-unset btn-change-pass" (click)="changePassword()">
+                <i class="material-icons vertical-align">lock</i>
+                {{'CHANGE_PASSWORD'| translate}}</button>
+              <mat-form-field class="example-full-width">
+                <input [disabled]="isAgent" matInput required type="text" #Username="ngModel"  style="text-transform: none !important;"
+                  [(ngModel)]="user.Username" name="Username" placeholder="{{'USERNAME' | translate}}">
+              </mat-form-field>
+              <div *ngFor="let err of validationErrors?.Username">
+                <span class="help-block text-danger">{{ err }}</span>
+              </div>
+              <mat-form-field class="pass">
+                <input [disabled]="isAgent" matInput type="text" [required]="isNewUser" #Password="ngModel"  style="text-transform: none !important;"
+                  [(ngModel)]="user.Password" name="Password" placeholder="{{'ENTER_YOUR_PASSWORD' | translate}}"
+                  value="{{passValue}}" [type]="hide ? 'password' : 'text'" autocomplete="off"
+                  pattern='^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,.>])[A-Za-z\d!@#$%^&*()-_=+{};:,.>]{6,}$'>
+                <mat-icon *ngIf="!isAgent" matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </mat-form-field>
+              <button [disabled]="isAgent" type="button" mat-raised-button color="primary" (click)="generatePassword()"
+                class="float-right outline-unset">
+                {{'GENERATE_PASSWORD' | translate}}
+              </button>
+              <div *ngIf="Password.errors?.pattern">
+                <span class="help-block text-danger"> {{'PASSWORD_FORMAT_ERROR' | translate}} </span>
+              </div>
+              <div *ngFor="let err of validationErrors?.Password">
+                <span *ngIf="isNewUser" class="help-block text-danger">{{ err }}</span>
+              </div>
+              <mat-form-field>
+                <mat-select [disabled]="isAgent" required placeholder="{{'ROLE_ID' | translate}}" name="Role" id="Role"
+                  #RoleId="ngModel" [(ngModel)]="user.RoleId">
+                  <mat-option *ngFor="let role of roles" [value]="role.Id">
+                    {{ role.Id }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div *ngFor="let err of validationErrors?.Role">
+                <span class="help-block text-danger">{{ err }}</span>
+              </div>
+              <mat-form-field class="example-full-width">
+                <input [disabled]="isAgent" matInput type="text" #Email="ngModel" [(ngModel)]="user.Email" name="Email"
+                  placeholder="{{'EMAIL' | translate}}" pattern="^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$" style="text-transform: none !important;">
+              </mat-form-field>
+              <div *ngIf="Email.errors?.pattern">
+                <span class="help-block text-danger"> {{'EMAIL_FORMAT_ERROR' | translate}} </span>
+              </div>
+              <mat-form-field class="example-full-width">
+                <mat-select [disabled]="isAgent" required type="number" #Status="ngModel" [(ngModel)]="user.Status"
+                  name="Status" placeholder="{{'STATUS' | translate}}">
+                  <mat-option *ngFor="let enum of userStatus" [value]="enum.value">
+                    {{enum.name | uppercase | translate}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div *ngFor="let err of validationErrors?.Status">
+                <span class="help-block text-danger">{{ err }}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+      <div class="col-md-12  p-l-15 p-r-15">
+        <mat-card class="m-0">
+          <mat-card-content class="p-b-65">
+            <button [disabled]="isAgent" type="submit" class="outline-unset" mat-raised-button color="primary">
+              <i class="material-icons check">check</i>
+              {{'SAVE' | translate}}
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </form>
+  </mat-card>
+  <mat-card>
+    <form *ngIf="showMainOffices && !isAgent" #formMainOffice="ngForm" (ngSubmit)="addMainOffice(formMainOffice)">
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title>{{'ADD_MAIN_OFFICE' | translate}}</mat-card-title>
+          <mat-form-field class="example-full-width">
+            <mat-select [disabled]="mainOffices.length == 0 " required placeholder="{{'MAIN_OFFICE_NAME' | translate}}"
+              name="UserMainOffice" id="UserMainOffice" #UserMainOffice="ngModel" [(ngModel)]="userMainOfficeId">
+              <mat-option *ngFor="let mainOffice of mainOffices" [value]="mainOffice.Id">
+                {{mainOffice.Name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngFor="let err of validationErrors?.MainOffice">
+            <span class="help-block text-danger">{{err}}</span>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button [disabled]="mainOffices.length == 0 " type="submit" class="outline-unset" mat-raised-button
+                color="primary" name="add"><i class="material-icons check">check</i>
+                {{'SAVE' | translate}}</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </form>
+    <div *ngIf="!isAgent" class="row">
+      <div class="col-md-12">
+        <mat-card>
+          <mat-card-content>
+            <mat-card-title>{{'MAIN_OFFICES_PREVIEW' | translate}} </mat-card-title>
+            <br>
+            <p-table #dt1 [value]="userMainOffices" [responsive]="true" [paginator]="true" [rows]="5"
+              [rowsPerPageOptions]="[5,10,20,30]">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-right" [pSortableColumn]="'MainOfficeName'">
+                    <p-sortIcon [field]="'MainOfficeName'"></p-sortIcon>
+                    {{'MAIN_OFFICE_NAME' | translate}}
+                  </th>
+                  <th class="text-right">
+                    {{'OPTIONS' | translate}}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-userMainOffice>
+                <tr>
+                  <td class="text-right"><span
+                      class="ui-column-title text-left float-left">{{ 'MAIN_OFFICE_NAME' | translate }}</span><span
+                      class="float-right">{{userMainOffice.MainOfficeName}}</span></td>
+                  <td class="text-right"><span
+                      class="ui-column-title text-left float-left">{{ 'OPTIONS' | translate }}</span><i
+                      class="ti-trash text-danger m-r-7-negative" deleteConfirmation
+                      [deleteItemId]="userMainOffice.MainOfficeId" (onDelete)="onDelete($event)"><span
+                        class="icon-text">{{'DELETE' | translate}}</span></i></td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td [attr.colspan]="2" class="text-center">
+                    <strong>{{'NO_ADDED_MAIN_OFFICES' | translate}}</strong>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </mat-card>
+
+
+
+
+  <mat-card>
+    <form *ngIf="showMainOffices && !isAgent" #formTechnicalInspection="ngForm" (ngSubmit)="addTechnicalInspection(formTechnicalInspection)">
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title>{{'ADD_TECHNICAL_INSPECTION' | translate}}</mat-card-title>
+          <mat-form-field class="example-full-width">
+            <mat-select [disabled]="insurances.length == 0 " required placeholder="{{'INSURANCE_COMPANY' | translate}}"
+              name="Insurance" id="Insurance" #Insurance="ngModel" [(ngModel)]="insuranceId">
+              <mat-option *ngFor="let insurance of insurances" [value]="insurance.Id">
+                {{insurance.Name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngFor="let err of validationErrors?.Insurance">
+            <span class="help-block text-danger">{{err}}</span>
+          </div>
+
+          <mat-form-field class="example-full-width">
+            <mat-select [disabled]="technicalInspections.length == 0 " required placeholder="{{'TECHNICAL_INSPECTION_WITHOUT_BAM' | translate}}"
+              name="TechnicalInspection" id="TechnicalInspection" #TechnicalInspection="ngModel" [(ngModel)]="userTechnicalInspectionId">
+              <mat-option *ngFor="let technicalInspection of technicalInspections" [value]="technicalInspection.Id">
+                {{technicalInspection.Name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngFor="let err of validationErrors?.TechnicalInspection">
+            <span class="help-block text-danger">{{err}}</span>
+          </div>
+
+          <mat-form-field class="example-full-width">
+            <input matInput required type="number" #Price="ngModel"
+              [(ngModel)]="price" name="Price" placeholder="{{'TC_PRICE' | translate}}">
+          </mat-form-field>
+          <div *ngFor="let err of validationErrors?.Price">
+            <span class="help-block text-danger">{{ err }}</span>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <button type="submit" class="outline-unset" mat-raised-button
+                color="primary" name="add"><i class="material-icons check">check</i>
+                {{'SAVE' | translate}}</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </form>
+    <div *ngIf="!isAgent" class="row">
+      <div class="col-md-12">
+        <mat-card>
+          <mat-card-content>
+            <mat-card-title>{{'TECHNICAL_INSPECTION_PREVIEW' | translate}} </mat-card-title>
+            <br>
+            <p-table #dt2 [value]="userTechnicalInspections" [responsive]="true" [paginator]="true" [rows]="5"
+              [rowsPerPageOptions]="[5,10,20,30]">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-right" [pSortableColumn]="'Insurance'">
+                    <p-sortIcon [field]="'Insurance'"></p-sortIcon>
+                    {{'INSURANCE_COMPANY' | translate}}
+                  </th>
+                  <th class="text-right" [pSortableColumn]="'TechnicalInspection'">
+                    <p-sortIcon [field]="'TechnicalInspection'"></p-sortIcon>
+                    {{'TECHNICAL_INSPECTION_WITHOUT_BAM' | translate}}
+                  </th>
+                  <th class="text-right" [pSortableColumn]="'Price'">
+                    <p-sortIcon [field]="'Price'"></p-sortIcon>
+                    {{'TC_PRICE' | translate}} (KM)
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-technicalInspection>
+                <tr>
+                  <td class="text-right"><span
+                      class="ui-column-title text-left float-left">{{ 'INSURANCE_COMPANY' | translate }}</span><span
+                      class="float-right">{{technicalInspection.Insurance}}</span></td>
+                      <td class="text-right"><span
+                        class="ui-column-title text-left float-left">{{ 'TECHNICAL_INSPECTION_WITHOUT_BAM' | translate }}</span><span
+                        class="float-right">{{technicalInspection.TechnicalInspection}}</span></td>
+                        <td class="text-right"><span
+                          class="ui-column-title text-left float-left">{{ 'TC_PRICE' | translate }}</span><span
+                          class="float-right">{{technicalInspection.Price}}</span></td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td [attr.colspan]="3" class="text-center">
+                    <strong>{{'NO_ADDED_TECHNICAL_INSPECTIONS' | translate}}</strong>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </mat-card>
+</div>

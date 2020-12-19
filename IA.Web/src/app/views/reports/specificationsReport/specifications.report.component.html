@@ -1,0 +1,413 @@
+<div class="width-100">
+  <mat-card>
+    <mat-card-content>
+      <mat-card-title class="m-b-10">{{'REPORTS_SPECIFICATIONS' | translate}}
+        <button [disabled]="totalSpecifications == 0" id="filter1-button" class="primary filter-button-mobile"
+          type="button" mat-raised-button color="primary" (click)="generateExcel()"><i class="ti-download"></i>
+          {{'EXPORT_TO_EXCEL' | translate}}</button>
+        <button [disabled]="totalSpecifications == 0" id="filter1-button" class="primary filter-button-mobile m-r-10 backgroung-color-dark-orange"
+          type="button" mat-raised-button color="primary" (click)="printSpecifications()"><i class="ti-printer"></i>
+          {{'PRINT' | translate}}</button>
+      </mat-card-title>
+      <br>
+      <div class="row m-t-10">
+        <div class="col-md-3">
+          <form>
+            <mat-form-field class="form-field-width width-90-percents">
+              <input matInput [matDatepicker]="dp" disabled #DateFrom="ngModel"
+                placeholder="{{'DATE_FROM' | translate}}" name="dateFrom" id="dateFrom" [(ngModel)]="filter.DateFrom"
+                (dateChange)="chosenFromMonthHandler(dp)">
+              <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker id="dp" #dp disabled="false">
+              </mat-datepicker>
+            </mat-form-field>
+            <div class="icon-position"><a (click)="clear('DateFrom')" class="cursor-pointer"><i
+                  class="icon line-height-25">clear</i></a> </div>
+          </form>
+        </div>
+        <div class="col-md-3">
+          <form>
+            <mat-form-field class="form-field-width width-90-percents">
+              <input matInput [matDatepicker]="dpo" disabled #DateTo="ngModel" placeholder="{{'DATE_TO' | translate}}"
+                name="dateTo" id="dateTo" [(ngModel)]="filter.DateTo" (dateChange)="chosenToMonthHandler(dpo)">
+              <mat-datepicker-toggle matSuffix [for]="dpo"></mat-datepicker-toggle>
+              <mat-datepicker #dpo disabled="false">
+              </mat-datepicker>
+            </mat-form-field>
+            <div class="icon-position"><a (click)="clear('DateTo')" class="cursor-pointer"><i
+                  class="icon line-height-25">clear</i></a> </div>
+          </form>
+        </div>
+        <div class="col-md-3">
+          <arni-autocomplete #insurancesComponent displayField="Name" name="InsuranceName"
+            (keyup.enter)="refreshSpecifications()" (onChange)="onSelectedInsurance($event)" [items]="insurances"
+            [selectedItem]="selectedInsurance" placeholder="{{'INSURANCE_SEARCH' | translate}}">
+          </arni-autocomplete>
+        </div>
+        <div class="col-md-3">
+          <arni-autocomplete #insuranceTypeComponent displayField="LabelName" [items]="insuranceTypes"
+            (keyup.enter)="refreshSpecifications()" [selectedItem]="selectedInsuranceType"
+            (onChange)="onSelectedInsuranceType($event)" placeholder="{{'INSURANCE_TYPE' | translate}}"
+            (click)="getInsuranceTypes()">
+          </arni-autocomplete>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <arni-autocomplete #insurancesComponent displayField="DisplayName" name="policyHolder"
+          (onChange)="onSelectedPolicyHolder($event)" [items]="policyHolders" [selectedItem]="selectedPolicyHolder"
+          (keydown.enter)="refreshSpecifications()" placeholder="{{'POLICY_HOLDER_SEARCH' | translate}}">
+        </arni-autocomplete>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field class="example-full-width">
+            <input matInput class="input" type="text" name="PolicyNumber" autocomplete="off" #searchText="ngModel"
+              (keyup.enter)="refreshSpecifications()" [(ngModel)]="SearchText"
+              placeholder="{{'POLICY_NUMBER' | translate}}" />
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <button id="filter1-button" class="primary-button filter-button-mobile" type="button" mat-raised-button
+            (click)="refreshSpecifications()" color="primary"><i class="material-icons search">search</i>
+            {{'FILTER' | translate}}</button>
+        </div>
+      </div>
+      <p-table #dt [value]="specifications" [responsive]="true" [paginator]="true" sortOrder="-1"
+        sortField="InsuranceName" [totalRecords]="totalSpecifications" (onLazyLoad)="loadSpecifications($event)"
+        [rowsPerPageOptions]="[10,20,30,40,50]" [rows]="10" [lazy]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-right" style="width: 40px">
+              {{'RB'| translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'InsuranceName'">
+              <p-sortIcon [field]="'InsuranceName'"></p-sortIcon>
+              {{'INSURANCE_NAME' | translate}}
+            </th>
+            <th class="text-right width-80-px" [pSortableColumn]="'InsuranceType'">
+              <p-sortIcon [field]="'InsuranceType'"></p-sortIcon>
+              {{'INSURANCE_TYPE_SHORT' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'Created'">
+              <p-sortIcon [field]="'Created'"></p-sortIcon>
+              {{'ISSUE_DATE' | translate}}
+            </th>
+            <th class="text-right width-140-px" [pSortableColumn]="'Number'">
+              <p-sortIcon [field]="'PolicyNumber'"></p-sortIcon>
+              {{'POLICY_NUMBER' | translate}}
+            </th>
+            <th class="text-right" [pSortableColumn]="'PolicyHolderName'">
+              <p-sortIcon [field]="'PolicyHolder'"></p-sortIcon>
+              {{'POLICY_HOLDER_NAME' | translate}}
+            </th>
+            <th class="text-right width-170-px" [pSortableColumn]="'Price'">
+              <p-sortIcon [field]="'Price'"></p-sortIcon>
+              {{'POLICY_PRICE' | translate}}
+            </th>
+            <th class="text-right width-170-px" [pSortableColumn]="'CarAccidentCompensation'">
+              <p-sortIcon [field]="'CarAccidentCompensation'"></p-sortIcon>
+              {{'CAR_ACCIDENT' | translate}}
+            </th>
+            <th class="text-right width-170-px" [pSortableColumn]="'TotalPremium'">
+              <p-sortIcon [field]="'TotalPremium'"></p-sortIcon>
+              {{'TOTAL_PREMIUM' | translate}}
+            </th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-specification let-i="rowIndex">
+          <tr>
+            <td class="text-right"><span class="ui-column-title text-left float-left">{{ 'RB' | translate }}</span>
+              {{i+1}}
+            </td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'INSURANCE_TYPE' | translate }}</span><span
+                class="float-right">{{specification.InsuranceName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'INSURANCE_TYPE' | translate }}</span><span
+                class="float-right">{{specification.InsuranceType}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'ISSUE_DATE' | translate }}</span><span
+                class="float-right">{{specification.Created | dateTimeFormat}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'POLICY_NUMBER' | translate }}</span><span
+                class="float-right">{{specification.Number}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'POLICY_HOLDER_NAME' | translate }}</span><span
+                class="float-right">{{specification.PolicyHolderName == null? specification.CompanyName : specification.PolicyHolderName}}</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'POLICY_PRICE' | translate }}</span><span
+                class="float-right">{{specification.Price}} KM</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'CAR_ACCIDENT' | translate }}</span><span
+                class="float-right">{{specification.CarAccidentCompensation}} KM</span></td>
+            <td class="text-right"><span
+                class="ui-column-title text-left float-left">{{ 'TOTAL_PREMIUM' | translate }}</span><span
+                class="float-right">{{specification.TotalPremium}} KM</span></td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr class="border-left-right-table border-top-2px font-size-17 display-none">
+            <th colspan="6" class="text-left border-table padding-left-12px">{{'TOTAL' | translate}}</th>
+            <th class="text-right border-left-right-table padding-right-12-px">{{sumPolicyPrice()}} KM</th>
+            <th class="text-right border-left-right-table padding-right-12-px">{{sumCarAccidentPrice()}} KM</th>
+            <th class="text-right border-left-right-table padding-right-12-px">{{sumTotalPremium()}} KM</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="9" class="text-center">
+              <strong>{{'NO_DATA' | translate}}</strong>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div id="main" style="visibility: collapse; height: 0px !important; overflow: auto !important;">
+  <section id="content_wrapper">
+    <div>
+      <div>
+        <div style="border-bottom:1px solid blue;padding-top:1%;padding-bottom:1%">
+          <img alt="homepage" src="assets/images/browser/ag-insurance-logo.png" style="margin-left: 100px;">
+          <table style="border-collapse: collapse; width:100%;margin-bottom: 0px;margin-top: -95px;margin-left: -145px;">
+            <tbody style="line-height: 20px;font-size:15px;float: right">
+              <tr>
+                <td>
+                  <span>
+                    <b>AG INSURANCE</b>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span>
+                    Agencija za zastupanje u osiguranju
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Čekaluška čikma br. 4
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span>
+                    Sarajevo, 71 000 BiH
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span>
+                    Telefon: +387 (0)33.209.507
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span>
+                    Mobitel: +387 (0)61.993.359
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span>
+                    E-mail: ag_insurance@ymail.com
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <h2 style="text-align:center">
+          SPECIFIKACIJA PROVIZIJE – NEŽIVOTNA OSIGURANJA
+        </h2>
+        <h5 style="margin:0">
+          Zastupnik: AG insurance, Sarajevo
+        </h5>
+        <h5 style="margin:0" *ngIf="filter.DateFrom != null || filter.DateTo != null">
+          Period: {{filter.DateFrom | dateFormat}} do {{filter.DateTo | dateFormat }}
+        </h5>
+        <div class="float-left">
+          <table border="1" style="border-collapse: collapse; width:100%">
+            <thead style="border:2px solid black">
+              <tr style="line-height: 20px;font-size:14px">
+                <th style="width:6%">
+                  RB
+                </th>
+                <th style="width:7%">
+                  VRO
+                </th>
+                <th style="width:8%">
+                  DATUM IZDAVANJA
+                </th>
+                <th style="width:10%">
+                  BROJ POLISE OSIGURANJA
+                </th>
+                <th style="width:25%">
+                  IME I PREZIME / NAZIV
+                </th>
+                <th style="width:8%">
+                  IZNOS POLISE OSIGURANJA
+                </th>
+                <th style="width:8%">
+                  AUTO NEZGODA
+                </th>
+                <th style="width:8%">
+                  UKUPNO PREMIJA
+                </th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let x of specificationPrint; let i = index">
+              <tr style="line-height: 20px;text-align: center">
+                <td class="text-center border-1-solid padding-10">
+                  {{i+1}}
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  {{x.InsuranceType || '-'}}
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  {{x.Created || '-' | dateFormat}}
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  {{x.Number || '-'}}
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  {{x.PolicyHolderName || '-'}}
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  {{x.Price || '-'}}
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  {{x.CarAccidentCompensation || '-'}}
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  {{x.TotalPremium || '-'}}
+                </td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr class="bg-green" style="line-height: 25px;text-align: center">
+                <td colspan="5" style="text-align:left;padding-left: 55px;font-weight: bold;"
+                  class="text-left border-1-solid padding-10">
+                  Ukupan iznos naplaćene premije po VRO:
+                </td>
+                <th class="text-center border-1-solid padding-10">
+                  {{this.sumPolicyPrice()}}
+                </th>
+                <th class="text-center border-1-solid padding-10">
+                  {{this.sumCarAccidentPrice()}}
+                <th class="text-center border-1-solid padding-10">
+                  {{this.sumTotalPremium()}}
+                </th>
+              </tr>
+              <tr>
+                <td colspan="8"></td>
+              </tr>
+              <tr class="bg-green" style="line-height: 25px;text-align: center">
+                <td colspan="7" style="text-align:left;padding-left: 55px;font-weight: bold;"
+                  class="text-left border-1-solid padding-10">
+                  Ugovorene provizije po AO, PZO:
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                </td>
+              </tr>
+              <tr>
+                <td colspan="8"></td>
+              </tr>
+              <tr class="bg-green" style="line-height: 25px;text-align: center">
+                <td colspan="7" style="text-align:left;padding-left: 55px;font-weight: bold;"
+                  class="text-left border-1-solid padding-10">
+                  Provizija za naplatiti po AO, PZO:
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  <b></b>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="8"></td>
+              </tr>
+              <tr class="bg-green" style="line-height: 25px;text-align: center">
+                <td colspan="7" style="text-align:left;padding-left: 55px;font-weight: bold;"
+                  class="text-left border-1-solid padding-10">
+                  Ugovorene provizije po AK:
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                </td>
+              </tr>
+              <tr>
+                <td colspan="8"></td>
+              </tr>
+              <tr class="bg-green" style="line-height: 25px;text-align: center">
+                <td colspan="7" style="text-align:left;padding-left: 55px;font-weight: bold;"
+                  class="text-left border-1-solid padding-10">
+                  Provizija za naplatiti po AK:
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  <b></b>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="8"></td>
+              </tr>
+              <tr class="bg-green" style="line-height: 25px;text-align: center">
+                <td colspan="7" style="text-align:left;padding-left: 55px;font-weight: bold;"
+                  class="text-left border-1-solid padding-10">
+                  UKUPNO PROVIZIJA ZA NAPLATITI
+                </td>
+                <td class="text-center border-1-solid padding-10">
+                  <b></b>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <h4> Sarajevo, {{today | dateFormat}}</h4>
+          <div style="margin-left:500px;margin-top: 0px;margin-bottom: 0px;margin-right: 0px;">
+            <h4 style="margin: 0px">AG insurance</h4>
+          </div>
+          <div style="margin-left:450px;margin-top: 0px;margin-bottom: 0px;margin-right: 0px;">
+            <h4 style="margin: 0px"> Mersiha Granić, zastupnik/broker u osiguranju</h4>
+          </div>
+          <img alt="homepage" src="assets/images/browser/ag-insurance-logo.png" style="margin-left: 300px;">
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <table>
+        <tbody>
+          <tr style="font-size:10px">
+            <td style="width:40%;padding-left: 30px;">
+              Rješenje broj: 04-21-488/16
+              <br>
+              Odobrenje za rad: 1.0.-021-3020/16
+              <br>
+              <br>
+              <br>
+            </td>
+            <td style="width:40%;padding-left: 20px;">
+              ID broj:4302842910006
+              <br>
+              TRN kod Sberbank: 140-102-113-000-5752
+              <br>
+              <br>
+              <br>
+            </td>
+            <td style="width:20%;padding-left: 20px;">
+              Šifra djelatnosti: 66.22
+              <br>
+              Broj u registru: ZFL537
+              <br>
+              <br>
+              <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div><!-- -------------- /Content -------------- -->
+  </section>
+</div>

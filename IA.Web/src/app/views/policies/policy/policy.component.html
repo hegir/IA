@@ -1,0 +1,192 @@
+<div fxLayout="row wrap">
+  <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+    <mat-card>
+      <mat-card-content>
+        <mat-card-title>{{'POLICIES' | translate}}</mat-card-title>
+        <div>
+          <button *ngxPermissionsOnly="['P_POLICIES_ADD']" mat-raised-button class="float-right add-button outline-unset m-l-10" color="primary" (click)="addOrEditPolicy('0')">
+            <i class="material-icons add">add</i>
+          {{'ADD_NEW_INSURANCE_POLICY' | translate}}
+        </button>
+          <button  mat-raised-button class="float-right backgroud-color-orange outline-unset" color="primary" (click)="stornPolicyNumber()">
+            <i class="material-icons clear">clear</i>
+          {{'POLICY_STORN' | translate}}
+        </button>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class=row>
+          <div class="col-md">
+            <mat-form-field>
+              <input matInput [matDatepicker]="beginDatePicker" #PolicyBegin="ngModel" [(ngModel)]="policyBegin"
+                name="PolicyBegin" placeholder="{{'POLICY_BEGIN_FROM' | translate}}">
+              <mat-datepicker-toggle matSuffix [for]="beginDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #beginDatePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        <div class="col-md">
+            <mat-form-field>
+              <input matInput [matDatepicker]="beginDatePickerUntil" #PolicyBeginUntil="ngModel"
+                [(ngModel)]="policyBeginUntil" name="PolicyBeginUntil"
+                placeholder="{{'POLICY_BEGIN_UNTIL' | translate}}">
+              <mat-datepicker-toggle matSuffix [for]="beginDatePickerUntil"></mat-datepicker-toggle>
+              <mat-datepicker #beginDatePickerUntil></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-md">
+            <mat-form-field>
+              <input matInput [matDatepicker]="expirationDatePicker" #PolicyExpiration="ngModel"
+                [(ngModel)]="policyExpiration" name="PolicyExpiration"
+                placeholder="{{'POLICY_EXPIRATION_FROM' | translate}}">
+              <mat-datepicker-toggle matSuffix [for]="expirationDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #expirationDatePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-md">
+            <mat-form-field>
+              <input matInput [matDatepicker]="expirationDatePickerUntil" #PolicyExpirationUntil="ngModel"
+                [(ngModel)]="policyExpirationUntil" name="PolicyExpirationUntil"
+                placeholder="{{'POLICY_EXPIRATION_UNTIL' | translate}}">
+              <mat-datepicker-toggle matSuffix [for]="expirationDatePickerUntil"></mat-datepicker-toggle>
+              <mat-datepicker #expirationDatePickerUntil></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div *ngIf="isAdmin" class="col-md">
+            <arni-autocomplete #usersComponent displayField="FullName" name="FullName"
+            (onChange)="onSelectedUser($event)" [items]="users" [selectedItem]="selectedUser"
+            (keydown.enter)="getPolicies()" placeholder="{{'ADDED_BY' | translate}}">
+          </arni-autocomplete>
+          </div>
+          <div class="col-md">
+            <arni-autocomplete #insurancesComponent displayField="Name" name="InsuranceName"
+              (onChange)="onSelectedInsurance($event)" [items]="insurances" [selectedItem]="selectedInsurance"
+              (keydown.enter)="getPolicies()" placeholder="{{'INSURANCE_SEARCH' | translate}}">
+            </arni-autocomplete>
+          </div>
+          <div class="col-md">
+            <arni-autocomplete #insurancesComponent displayField="DisplayName" name="policyHolder"
+            (onChange)="onSelectedPolicyHolder($event)" [items]="policyHolders" [selectedItem]="selectedPolicyHolder"
+            (keydown.enter)="getPolicies()" placeholder="{{'POLICY_HOLDER_SEARCH' | translate}}">
+          </arni-autocomplete>
+          </div>
+          <div class="col-md">
+            <mat-form-field id="search-input" class="example-full-width">
+              <input matInput class="input" type="text" #SearchText="ngModel" [(ngModel)]="searchText"
+                name="PolicyNumber" placeholder="{{'POLICY_NUMBER_SEARCH' | translate}}"
+                (keydown.enter)="getPolicies()" />
+            </mat-form-field>
+          </div>
+          <div class="col-md">
+            <mat-form-field id="search-input" class="example-full-width">
+              <input matInput class="input" type="text" #SearchInsurance="ngModel" [(ngModel)]="searchInsurance"
+                name="InsuranceTypeLabel" placeholder="{{'VRO' | translate}}"
+                (keydown.enter)="getPolicies()" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-md">
+            <button id="filter1-button" class="primary-button filter-button-mobile float-right" type="button"
+              mat-raised-button color="primary" (click)="getPolicies()"><i class="material-icons search">search</i>
+              {{'FILTER' | translate}}</button>
+          </div>
+        </div>
+        <p-table #dt [value]="policies" [rowsPerPageOptions]="[5,10,20,50,100]" (onLazyLoad)="loadPolicies($event)"
+          [responsive]="true" [paginator]="true" sortOrder="1" sortField="Created" [rows]="10"
+          [totalRecords]="totalPolicies" [globalFilterFields]="['InsuranceName','PolicyHolder','PolicyNumber','InsuranceTypeLabel']"
+          [lazy]="true">
+          <ng-template pTemplate="header">
+            <tr>
+              <th [pSortableColumn]="'InsuranceName'" class="text-right width-150-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'INSURANCE_COMPANY' | translate}}
+              </th>
+              <th [pSortableColumn]="'PolicyHolder'" class="text-right width-120-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'POLICY_HOLDER_INFO' | translate}}
+              </th>
+              <th [pSortableColumn]="'PolicyNumber'" class="text-right width-120-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'POLICY_NUMBER' | translate}}
+              </th>
+              <th [pSortableColumn]="'InsuranceTypeLabel'" class="text-right width-60-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'VRO' | translate}}
+              </th>
+              <th *ngIf="isAdmin" [pSortableColumn]="'UserFullName'" class="text-right width-120-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'ADDED_BY' | translate}}
+              </th>
+              <th [pSortableColumn]="'Created'" class="text-right width-140-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'MADE_DATE' | translate}}
+              </th>
+              <th [pSortableColumn]="'PolicyBegin'" class="text-right width-100-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'BEGIN_DATE' | translate}}
+              </th>
+              <th [pSortableColumn]="'PolicyExpiration'" class="text-right width-120-px">
+                <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+                {{'DATE_OF_EXPIRATION' | translate}}
+              </th>
+              <th class="text-right width-120-px">
+                {{'OPTIONS' | translate}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-policy>
+            <tr [class.color-orange]="policy.PolicyNumberStatus == 4">
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'INSURANCE_COMPANY' | translate }}</span><span
+                  class="float-right">{{policy.InsuranceName}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'POLICY_HOLDER_INFO' | translate }}</span><span
+                  class="float-right">{{policy.PolicyHolder == null ? policy.CompanyName : policy.PolicyHolder}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'POLICY_NUMBER' | translate }}</span><span
+                  class="float-right">{{policy.PolicyNumber}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'INSURANCE_TYPES' | translate }}</span><span
+                  class="float-right">{{policy.InsuranceTypeLabel}}</span></td>
+                  <td *ngIf="isAdmin" class="text-right"><span
+                    class="ui-column-title text-left float-left">{{ 'ADDED_BY' | translate }}</span><span
+                    class="float-right">{{policy.UserFullName}}</span></td>
+              <td *ngIf="policy.Created==todayDate" class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'MADE_DATE' | translate }}</span><span
+                  class="float-right">{{ policy.Created | dateTimeFormat}}</span></td>
+                  <td *ngIf="policy.Created!=todayDate" class="text-right"><span
+                      class="ui-column-title text-left float-left">{{ 'MADE_DATE' | translate }}</span><span
+                      class="float-right">{{ policy.Created | dateFormat}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'BEGIN_DATE' | translate }}</span><span
+                  class="float-right">{{policy.PolicyBegin | dateFormat}}</span></td>
+              <td class="text-right"><span
+                  class="ui-column-title text-left float-left">{{ 'DATE_OF_EXPIRATION' | translate }}</span><span
+                  class="float-right">{{policy.PolicyExpiration | dateFormat}}</span></td>
+              <td class="detail-icon"><span class="ui-column-title text-left float-left">{{ 'OPTIONS' | translate }}</span>
+                <i class="ti-money text-details" (click)="editPolicyPayments(policy.Id)"><span
+                  class="icon-text">{{'PAYMENTS'| translate}}</span></i>
+                <i class="ti-pencil text-details m-r-7-negative" (click)="addOrEditPolicy(policy.Id)"><span
+                    class="icon-text">{{'DETAILS'| translate}}</span></i>
+                <i class="ti-trash text-danger m-r-7-negative" deleteConfirmation [deleteItemId]="policy.Id"
+                  (onDelete)="removePolicy($event)"><span class="icon-text">{{'DELETE'| translate}}</span></i>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td *ngIf="isAdmin" [attr.colspan]="9" class="text-center">
+                <strong>{{'NO_DATA_FOR_SELECTED_FILTERS' | translate}}</strong>
+              </td>
+              <td *ngIf="!isAdmin" [attr.colspan]="8" class="text-center">
+                <strong>{{'NO_DATA_FOR_SELECTED_FILTERS' | translate}}</strong>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

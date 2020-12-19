@@ -1,0 +1,49 @@
+<div class="row">
+  <div class="col-md-12 width-100-percents">
+    <mat-card-title>{{'ASSIGN' | translate}}</mat-card-title>
+    <p-table [value]="agents" [paginator]="true" #dt [rows]="5" [responsive]="true"
+      [globalFilterFields]="['FullName']">
+      <ng-template pTemplate="caption">
+        <input type="text" class="width-100-percents border-light p-l-10" InputText
+          placeholder="{{'AGENTS_SEARCH' | translate}}" (input)="dt.filterGlobal($event.target.value, 'contains')">
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th [pSortableColumn]="'FullName'" class="text-left  width-50-percents">
+            <i class="ui-sortable-column-icon pi pi-fw pi-sort"></i>
+            {{'FULL_NAME' | translate}}
+          </th>
+          <th class="text-center width-30-percents"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td><span class="ui-column-title float-right text-left"></span>{{user.FullName}}</td>
+          <td class="text-center">
+            <a class="btn-custom text-info" (click)="assign(user)">
+              <i *ngIf="user.Id != selectedAgent" class="ti-angle-double-down text-info"></i>
+              <i *ngIf="selectedAgent != null && user.Id == selectedAgent" class="ti-close text-danger"></i>
+              <br>
+              <span *ngIf="user.Id != selectedAgent" class="icon-item-title">{{ 'ASSIGN' | translate }}</span>
+              <span *ngIf="selectedAgent != null && user.Id == selectedAgent"
+                class="icon-item-title text-danger">{{ 'CANCEL' | translate }}</span>
+            </a>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="2" class="text-center text-info vertical-align">
+            <span class="btn-label">
+              <i class="material-icons">info</i>
+            </span>
+            {{'THERE_ARE_NO_PRESENT_AGENTS' | translate}}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <button [disabled]="!selectedAgent" type="submit" class="outline-unset" mat-raised-button color="primary" name="add" (click)="save()"><i
+      class="material-icons check">check</i>
+    {{'SAVE' | translate}}</button>
+  </div>
+</div>
