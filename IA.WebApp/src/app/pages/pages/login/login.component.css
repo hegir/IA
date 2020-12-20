@@ -1,0 +1,12 @@
+.linkstyle{
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.h1-login, .h6-login
+{
+    color: #FFFFFF !important;
+    font-weight: 400;
+    text-align: center;
+}
