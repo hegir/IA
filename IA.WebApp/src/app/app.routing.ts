@@ -17,45 +17,16 @@ export const AppRoutes: Routes = [
     children: [
       {
         path: "",
-        loadChildren: "./pages/dashboard/dashboard.module#DashboardModule"
-      },
-      {
-        path: "components",
-        loadChildren:
-          "./pages/components/components.module#ComponentsPageModule"
-      },
-      {
-        path: "forms",
-        loadChildren: "./pages/forms/forms.module#Forms"
+        loadChildren: "./views/dashboard/dashboard.module#DashboardModule"
       },
       {
         path: "tables",
         loadChildren: "./pages/tables/tables.module#TablesModule"
       },
       {
-        path: "maps",
-        loadChildren: "./pages/maps/maps.module#MapsModule"
-      },
-      {
-        path: "widgets",
-        loadChildren: "./pages/widgets/widgets.module#WidgetsModule"
-      },
-      {
-        path: "charts",
-        loadChildren: "./pages/charts/charts.module#ChartsModule"
-      },
-      {
-        path: "calendar",
-        loadChildren: "./pages/calendar/calendar.module#CalendarModulee"
-      },
-      {
-        path: "",
+        path: "users",
         loadChildren:
-          "./pages/pages/user-profile/user-profile.module#UserModule"
-      },
-      {
-        path: "",
-        loadChildren: "./pages/pages/timeline/timeline.module#TimelineModule"
+          "./views/users/user-profile/user-profile.module#UserModule"
       }
     ]
   },

@@ -30,11 +30,14 @@
                 #Username="ngModel"
                 type="text"
                 class="form-control"
-                placeholder="First Name..."
+                placeholder="Email..."
                 (focus)="focus = true"
                 (blur)="focus = false"
                 required
               />
+            </div>
+            <div class="login-validation" *ngFor="let err of validationErrors?.Username">
+              <span class="help-block text-danger">{{ err }}</span>
             </div>
             <div
               class="input-group no-border form-control-lg"
@@ -58,6 +61,9 @@
                 (keydown.enter) = "login()"
                 required
               />
+            </div>
+            <div class="login-validation" *ngFor="let err of validationErrors?.Password">
+              <span class="help-block text-danger">{{ err }}</span>
             </div>
           </div>
           <div class="card-footer ">

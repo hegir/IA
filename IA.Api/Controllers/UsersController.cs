@@ -85,7 +85,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("")]
-        [Permission("P_USERS_EDIT")]
+        [AllowAnonymous]
         public IActionResult Post([FromBody] User entity)
         {
             try
@@ -105,6 +105,7 @@ namespace IA.Api.Controllers
                         if (_repositoryUser.FindOne(x => x.Email == entity.Email) != null)
                             return BadRequest("USER_WITH_EMAIL_ALREADY_EXISTS");
 
+                        entity.SetDefaults();
                         _repositoryUser.Insert(entity);
 
                         sc.Commit();

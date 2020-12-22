@@ -3,6 +3,7 @@ using IA.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace IA.Model
 {
@@ -26,14 +27,13 @@ namespace IA.Model
         [RegularExpression(@"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$", ErrorMessage = "EMAIL_FORMAT_IS_INVALID")]
         public string Email { get; set; }
 
+        [JsonIgnore]
         [Column("password_hash")]
         public string PasswordHash { get; set; }
 
-        [Required]
         [Column("status")]
         public UserStatus Status { get; set; }
 
-        [Required]
         [Column("role_id")]
         public string RoleId { get; set; }
 
@@ -44,29 +44,21 @@ namespace IA.Model
         [RegularExpression(@"^[+]?[0-9-/]*$", ErrorMessage = "MOBILE_PHONE_NUMBER_IS_INVALID")]
         public string PhoneNumber { get; set; }
 
-        [Column("city_id")]
-        public int CityId { get; set; }
-
         [Column("gender")]
         public Gender Gender { get; set; }
 
         [NotMapped]
-        public string CityName { get; set; }
-
-        [Column("address")]
-        public string Address { get; set; }
-
-        [NotMapped]
         public string FullName { get { return FirstName + " " + LastName; } }
-
 
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,.>])[A-Za-z\d!@#$%^&*()-_=+{};:,.>]{6,}$", ErrorMessage = "PASSWORD_FORMAT_ERROR_EXPRESION")]
         [NotMapped]
         public string Password { get; set; }
 
-        [NotMapped]
-        public string CityNameMunicipalityCode { get; set; }
-
+        public void SetDefaults()
+        {
+            this.Status = UserStatus.Active;
+            this.RoleId = "User";
+        }
 
     }
 }

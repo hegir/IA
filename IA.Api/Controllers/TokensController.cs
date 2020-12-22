@@ -52,7 +52,7 @@ namespace IA.Api.Controllers
                     switch (parameters.GrantType)
                     {
                         case "password":
-                            
+
                             user = _repositoryUser.FindOne(x => x.Email == parameters.Username.ToLower() && x.PasswordHash == _securityProvider.CreateMD5(parameters.Password));
                           
                             if(user == null)

@@ -1,5 +1,9 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
+import { AuthenticationService } from "src/app/core/authentication.service";
+import { RequestService } from "src/app/core/request.service";
+import { TokenStorage } from "src/app/core/tokenstorage.service";
 
 var misc:any ={
     sidebar_mini_active: true
@@ -32,53 +36,6 @@ export const ROUTES: RouteInfo[] = [
     icontype: "design_app"
   },
   {
-    path: "/pages",
-    title: "Pages",
-    type: "sub",
-    icontype: "design_image",
-    collapse: "pages",
-    isCollapsed: true,
-    children: [
-      { path: "pricing", title: "Pricing Page", ab: "PP" },
-      { path: "timeline", title: "Timeline Page", ab: "TP" },
-      { path: "login", title: "Login Page", ab: "LP" },
-      { path: "register", title: "Register Page", ab: "RP" },
-      { path: "lock", title: "Lock Screen Page", ab: "LSP" },
-      { path: "user", title: "User Page", ab: "UP" }
-    ]
-  },
-  {
-    path: "/components",
-    title: "Components",
-    type: "sub",
-    icontype: "education_atom",
-    collapse: "components",
-    isCollapsed: true,
-    children: [
-      { path: "buttons", title: "Buttons", ab: "B" },
-      { path: "grid", title: "Grid System", ab: "GS" },
-      { path: "panels", title: "Panels", ab: "P" },
-      { path: "sweet-alert", title: "Sweet Alert", ab: "SA" },
-      { path: "notifications", title: "Notifications", ab: "N" },
-      { path: "icons", title: "Icons", ab: "I" },
-      { path: "typography", title: "Typography", ab: "T" }
-    ]
-  },
-  {
-    path: "/forms",
-    title: "Forms",
-    type: "sub",
-    icontype: "files_single-copy-04",
-    collapse: "forms",
-    isCollapsed: true,
-    children: [
-      { path: "regular", title: "Regular Forms", ab: "RF" },
-      { path: "extended", title: "Extended Forms", ab: "EF" },
-      { path: "validation", title: "Validation Forms", ab: "VF" },
-      { path: "wizard", title: "Wizard", ab: "W" }
-    ]
-  },
-  {
     path: "/tables",
     title: "Tables",
     type: "sub",
@@ -89,19 +46,6 @@ export const ROUTES: RouteInfo[] = [
       { path: "regular", title: "Regular Tables", ab: "RT" },
       { path: "extended", title: "Extended Tables", ab: "ET" },
       { path: "ngx-datatable", title: "Ngx Datatable", ab: "ND" }
-    ]
-  },
-  {
-    path: "/maps",
-    title: "Maps",
-    type: "sub",
-    icontype: "location_pin",
-    collapse: "maps",
-    isCollapsed: true,
-    children: [
-      { path: "google", title: "Google Maps", ab: "GM" },
-      { path: "fullscreen", title: "Full Screen Map", ab: "FSM" },
-      { path: "vector", title: "Vector Map", ab: "VM" }
     ]
   },
   {
@@ -127,13 +71,21 @@ export const ROUTES: RouteInfo[] = [
 @Component({
   selector: "app-sidebar",
   templateUrl: "./sidebar.component.html",
-  styleUrls: ["./sidebar.component.css"]
+  styleUrls: ["./sidebar.component.css"],
+  providers: [TokenStorage, AuthenticationService, RequestService]
 })
 export class SidebarComponent implements OnInit {
   public menuItems: any[];
   public isCollapsed = true;
 
-  constructor(private toastr: ToastrService) {}
+  userFullName: string;
+
+  constructor(
+    private tokenStorage: TokenStorage,
+    private authService: AuthenticationService,
+    private router: Router) {
+      this.userFullName = this.tokenStorage.getFullName();
+  }
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
@@ -208,10 +160,8 @@ export class SidebarComponent implements OnInit {
     if (misc.sidebar_mini_active === true) {
         body.classList.remove('sidebar-mini');
         misc.sidebar_mini_active = false;
-        this.showSidebarMessage('Sidebar mini deactivated...');
     } else {
             body.classList.add('sidebar-mini');
-            this.showSidebarMessage('Sidebar mini activated...');
             misc.sidebar_mini_active = true;
     }
 
@@ -226,16 +176,13 @@ export class SidebarComponent implements OnInit {
     }, 1000);
   }
 
-  showSidebarMessage(message){
-    this.toastr.show(
-      '<span class="now-ui-icons ui-1_bell-53"></span>', message,
-      {
-        timeOut: 4000,
-        closeButton: true,
-        enableHtml: true,
-        toastClass: "alert alert-danger alert-with-icon",
-        positionClass: "toast-top-right"
-      }
-    );
+  logout()
+  {
+    this.authService.logout();
+  }
+
+  navigateToUserDetails()
+  {
+    this.router.navigate(['users']);
   }
 }

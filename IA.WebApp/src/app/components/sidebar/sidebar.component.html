@@ -5,8 +5,8 @@
         <img src="./assets/img/angular2-logo-white.png" />
       </div>
     </a>
-    <a href="https://www.creative-tim.com" class="simple-text logo-normal">
-      Creative Tim
+    <a [routerLink]="" class="simple-text logo-normal">
+      {{'INVOICE_APP' | translate}}
     </a>
     <div class="navbar-minimize">
       <button
@@ -34,26 +34,20 @@
           [attr.aria-expanded]="!isCollapsed"
           aria-controls="collapseExample"
         >
-          <span> James Amos <b class="caret"></b> </span>
+          <span> {{ userFullName }} <b class="caret"></b> </span>
         </a>
         <div class="collapse" id="collapseExample" [ngbCollapse]="isCollapsed">
           <ul class="nav">
             <li>
-              <a href="javascript:void(0)" >
+              <a (click)="navigateToUserDetails()" >
                 <span class="sidebar-mini-icon">MP</span>
                 <span class="sidebar-normal">My Profile</span>
               </a>
             </li>
             <li>
-              <a href="javascript:void(0)">
-                <span class="sidebar-mini-icon">EP</span>
-                <span class="sidebar-normal">Edit Profile</span>
-              </a>
-            </li>
-            <li>
-              <a href="javascript:void(0)">
-                <span class="sidebar-mini-icon">S</span>
-                <span class="sidebar-normal">Settings</span>
+              <a (click)="logout()">
+                <span class="sidebar-mini-icon">L</span>
+                <span class="sidebar-normal">Logout</span>
               </a>
             </li>
           </ul>

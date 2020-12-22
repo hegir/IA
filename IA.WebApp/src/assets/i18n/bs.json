@@ -1,0 +1,8 @@
+{
+    "REQUIRED_FIELD": "Obavezno polje",
+    "INVALID_FORMAT": "Format nije validan",
+    "CREATE_AN_ACCOUNT": "Kreirajte nalog",
+    "LOGIN": "Prijava",
+    "INVOICE_APP": "Invoice app"
+
+}

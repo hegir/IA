@@ -1,20 +1,34 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
+import { NotificationsService } from "src/app/core/notifications.service";
+import { RequestService } from "src/app/core/request.service";
+import { ValidationService } from "src/app/core/validation.service";
+import { User } from "src/app/models/user";
+import { UsersService } from "src/app/services/users.service";
 
 @Component({
   selector: "app-register",
   templateUrl: "./register.component.html",
-  styleUrls: ["./register.component.css"]
+  styleUrls: ["./register.component.css"],
+  providers: [UsersService,
+  RequestService,
+  NotificationsService,
+  ValidationService]
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  private focus;
-  private focus2;
-  private focus3;
+  user: User = new User();
+  agreedTerms: boolean = false;
 
-  constructor() {}
+  @ViewChild('registerForm') registerForm;
+  public validationErrors: any;
+
+  constructor(private usersService: UsersService,
+    private notificationsService: NotificationsService,
+    private router: Router,
+    private validationService: ValidationService) {}
 
   ngOnInit() {
     var $page = document.getElementsByClassName("full-page")[0];
-    var image_src;
     var image_container = document.createElement("div");
     image_container.classList.add("full-page-background");
     $page.classList.add("register-page");
@@ -24,5 +38,23 @@ export class RegisterComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     var $page = document.getElementsByClassName("full-page")[0];
     $page.classList.remove("register-page");
+  }
+
+  register()
+  {
+    this.validationErrors = {};
+    if (this.registerForm.invalid) {
+      this.validationErrors = this.validationService.PrepareRequiredFieldErrors(this.registerForm);
+      console.log(this.validationErrors);
+      return;
+    }
+
+    this.usersService.Save(this.user).then(x =>{
+      if(x != null)
+        {
+          this.notificationsService.success("Successfully registered, please login");
+          this.router.navigate(['pages/login']);
+        }
+    })
   }
 }

@@ -20,31 +20,31 @@ export class TokenStorage {
   }
 
   public getRefreshTime(): Observable<number> {
-    const refreshTime: number = Number(this.storageService.getItem('refreshTime'));
+    const refreshTime: number = Number(sessionStorage.getItem('refreshTime'));
     return of(refreshTime);
   }
 
   public getUsername(): Observable<string> {
-    const userName: string = <string>this.storageService.getItem('username');
+    const userName: string = <string>sessionStorage.getItem('username');
     return of(userName);
   }
 
   public getLangId(): Observable<string> {
-    const langId: string = <string>this.storageService.getItem('langId');
+    const langId: string = <string>sessionStorage.getItem('langId');
     return of(langId);
   }
 
   public getPreviousLangId(): string {
-    const langId: string = <string>this.storageService.getItem('previousLangId');
+    const langId: string = <string>sessionStorage.getItem('previousLangId');
     return langId;
   }
 
   public getUserId(): string {
-    return <string>this.storageService.getItem('userId');
+    return <string>sessionStorage.getItem('userId');
   }
 
   public getRoleId(): string {
-    return <string>this.storageService.getItem('roleId');
+    return <string>sessionStorage.getItem('roleId');
   }
 
   public getTenantId(): string | null {
@@ -74,7 +74,7 @@ export class TokenStorage {
   }
 
   public getFullName(): string {
-    return <string>this.storageService.getItem('fullName');
+    return <string>sessionStorage.getItem('fullName');
   }
   public getTenants(): any {
     let tenants = sessionStorage.getItem('tenants');
@@ -83,7 +83,7 @@ export class TokenStorage {
     return null;
   }
   public isSuperAdmin(): boolean {
-    return <boolean><unknown>this.storageService.getItem('isSuperAdmin');
+    return <boolean><unknown>sessionStorage.getItem('isSuperAdmin');
   }
 
   public hasManyTenants() {
@@ -92,7 +92,7 @@ export class TokenStorage {
     return false;
   }
   public setFullName(fullName: string): TokenStorage {
-    this.storageService.setItem('fullName', fullName);
+    sessionStorage.setItem('fullName', fullName);
     return this;
   }
 
@@ -112,31 +112,31 @@ export class TokenStorage {
   }
 
   public setRefreshTime(refreshTime: number): TokenStorage {
-    this.storageService.setItem('refreshTime', refreshTime.toString());
+    sessionStorage.setItem('refreshTime', refreshTime.toString());
     return this;
   }
 
   public setUsername(userName: string): TokenStorage {
-    this.storageService.setItem('username', userName);
+    sessionStorage.setItem('username', userName);
     return this;
   }
 
   public setLangId(langId: string): TokenStorage {
-    this.storageService.setItem('langId', langId)
+    sessionStorage.setItem('langId', langId)
     return this;
   }
 
   public setPreviousLangId(langId: string): TokenStorage {
-    this.storageService.setItem('previousLangId', langId)
+    sessionStorage.setItem('previousLangId', langId)
     return this;
   }
 
   public setUserId(userId: string): TokenStorage {
-    this.storageService.setItem('userId', userId);
+    sessionStorage.setItem('userId', userId);
     return this;
   }
   public setRoleId(roleId: string): TokenStorage {
-    this.storageService.setItem('roleId', roleId);
+    sessionStorage.setItem('roleId', roleId);
     return this;
   }
   public setTenantId(tenantId: string): TokenStorage {
@@ -144,7 +144,7 @@ export class TokenStorage {
     return this;
   }
   public setIsSuperAdmin(isSuperAdmin: string): TokenStorage {
-    this.storageService.setItem('isSuperAdmin', isSuperAdmin);
+    sessionStorage.setItem('isSuperAdmin', isSuperAdmin);
     return this;
   }
 
