@@ -117,8 +117,6 @@ namespace IA.Api
             IContainer container = null;
             containerBuilder.Register(c => container).AsSelf();
             containerBuilder.RegisterBuildCallback(c => container = (IContainer)c);
-            containerBuilder.RegisterType<RepositoryCity>().As<IRepositoryCity>();
-            containerBuilder.RegisterType<RepositoryCanton>().As<IRepositoryCanton>();
             containerBuilder.RegisterType<RepositoryUser>().As<IRepositoryUser>();
             containerBuilder.RegisterType<RepositoryRole>().As<IRepositoryRole>();
             containerBuilder.RegisterType<RepositoryPermission>().As<IRepositoryPermission>();
@@ -133,8 +131,10 @@ namespace IA.Api
             containerBuilder.RegisterType<CacheProvider>().As<ICacheProvider>().SingleInstance();
             containerBuilder.Register(c => new NotificationManager(Program.Configuration.GetConnectionString("IAConnection"))).As<INotificationManager>().SingleInstance();
             containerBuilder.RegisterType<PermissionAuthorizationHandler>().As<IAuthorizationHandler>().SingleInstance();
+            containerBuilder.RegisterType<RepositoryInvoice>().As<IRepositoryInvoice>();
+            containerBuilder.RegisterType<RepositoryInvoiceItem>().As<IRepositoryInvoiceItem>();
 
-
+            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime applicationLifetime, ILogger<Startup> logger)

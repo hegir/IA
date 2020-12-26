@@ -43,31 +43,6 @@ namespace IA.Api.Controllers
         }
 
         /// <summary>
-        /// Get all users
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("")]
-        [Permission("P_USERS")]
-        public IActionResult GetAll(int limit, int offset, string sortingField, int order, string searchText, int? cityId)
-        {
-
-            return Ok(_repositoryUser.FindAll(limit, offset, sortingField, order, searchText, cityId));
-        }
-
-        /// <summary>
-        /// Count all users
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("count")]
-        [Permission("P_USERS")]
-        public IActionResult Count(string searchText, int? cityId)
-        {
-            return Ok(_repositoryUser.CountAll(searchText, cityId));
-        }
-
-        /// <summary>
         /// Get user by id
         /// </summary>
         /// <returns></returns>

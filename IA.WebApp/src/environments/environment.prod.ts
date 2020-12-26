@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  apiEndpoint: ""
+  apiEndpoint: "https://localhost:44311/api/",
+  defaultLanguage: 'bs',
+  defaultCurrency: 'USD'
 };

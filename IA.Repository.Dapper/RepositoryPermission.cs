@@ -2,23 +2,16 @@
 using IA.Repository.Base.Dapper;
 using Dapper;
 using IA.Model;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace IA.Repository.Dapper
 {
     public class RepositoryPermission : RepositoryBase<string, Permission>, IRepositoryPermission
     {
-        private readonly ISessionScopeFactory _sessionScopeFactory;
-        private readonly IConnectionFactory _connectionFactory;
 
         public RepositoryPermission(IConnectionFactory connectionFactory, ISessionScopeFactory sessionScopeFactory) : base(connectionFactory, sessionScopeFactory)
-        {
-            _sessionScopeFactory = sessionScopeFactory;
-            _connectionFactory = connectionFactory;
-        }
+        {  }
 
         public IEnumerable<Permission> Find(List<string> ids)
         {

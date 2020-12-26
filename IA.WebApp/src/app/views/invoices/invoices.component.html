@@ -1,0 +1,69 @@
+<div class="panel-header panel-header-sm"></div>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <!-- <div class="row"> -->
+                    <div class="vertical-align-center bg-brand text-white card-icon">
+                        <i class="material-icons">group</i>
+                    </div>
+                    <button type="button" (click)="edit(0)"
+                        class="btn btn-brand float-right m-0">{{'ADD_NEW_INVOICE' | translate}}</button>
+                </div>
+                <div class="card-body">
+
+                    <p-table  #dt [value]="invoices" [paginator]="true" [responsive]="true" [rows]="10" sortOrder="-1"
+                        [rowsPerPageOptions]="[10,20,30,40,50,100]"
+                        [totalRecords]="totalInvoices">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-right" [pSortableColumn]="'Id'">
+                                    <p-sortIcon [field]="'Id'"></p-sortIcon>{{'ID' | translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'InvoiceNumber'">
+                                    <p-sortIcon [field]="'InvoiceNumber'"></p-sortIcon>{{'INVOICE_NUMBER' | translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'Type'">
+                                    <p-sortIcon [field]="'Type'"></p-sortIcon>{{'TYPE' | translate}}
+                                </th>
+                                <th class="text-right">{{'OPTIONS' | translate}}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-invoice>
+                            <tr>
+                                <td class="text-right"><span
+                                        class="ui-column-title text-left float-left">{{'ID' | translate }}</span>{{invoice.Id}}
+                                </td>
+                                <td class="text-right"><span
+                                        class="ui-column-title text-left float-left">{{'INVOICE_NUMBER' | translate }}</span>{{invoice.InvoiceNumber || '-'}}
+                                </td>
+                                <td class="text-right"><span
+                                        class="ui-column-title text-left float-left">{{'TYPE' | translate }}</span>{{InvoiceTypes[invoice.Type].name}}
+                                </td>
+                                <td class="text-right"><span
+                                        class="ui-column-title text-left float-left">{{'OPTIONS' | translate }}</span>
+                                    <a (click)="edit(invoice.Id)"
+                                        class="btn text-info btn-link btn-just-icon edit width-auto">
+                                        <i class="now-ui-icons users_single-02"></i>
+                                        <span
+                                            class="icon-item-title text-info">{{ 'INVOICE_DETAILS_SHORT' | translate }}</span></a>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="4" class="text-center text-info">
+                                    <span class="btn-label">
+                                        <i class="material-icons">info</i>
+                                    </span>
+                                    {{'NO_DATA' | translate}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

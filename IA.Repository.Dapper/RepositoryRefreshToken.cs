@@ -2,10 +2,6 @@
 using IA.Repository.Base.Dapper;
 using Dapper;
 using IA.Model;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using System.Threading;
 
 namespace IA.Repository.Dapper

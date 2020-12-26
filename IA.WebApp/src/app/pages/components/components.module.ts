@@ -9,7 +9,6 @@ import { ButtonsComponent } from "./buttons/buttons.component";
 import { PanelsComponent } from "./panels/panels.component";
 import { GridSystemComponent } from "./grid-system/grid-system.component";
 import { SweetAlertComponent } from "./sweet-alert/sweet-alert.component";
-import { NotificationsComponent } from "./notifications/notifications.component";
 import { IconsComponent } from "./icons/icons.component";
 import { TypographyComponent } from "./typography/typography.component";
 
@@ -28,7 +27,6 @@ import { ComponentsRoutes } from "./components.routing";
     PanelsComponent,
     GridSystemComponent,
     SweetAlertComponent,
-    NotificationsComponent,
     IconsComponent,
     TypographyComponent
   ],
@@ -37,7 +35,6 @@ import { ComponentsRoutes } from "./components.routing";
     PanelsComponent,
     GridSystemComponent,
     SweetAlertComponent,
-    NotificationsComponent,
     IconsComponent,
     TypographyComponent
   ]

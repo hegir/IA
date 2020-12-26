@@ -49,10 +49,10 @@ export const ROUTES: RouteInfo[] = [
     ]
   },
   {
-    path: "/widgets",
-    title: "Widgets",
+    path: "/invoices",
+    title: "Invoices",
     type: "link",
-    icontype: "objects_diamond"
+    icontype: "education_agenda-bookmark"
   },
   {
     path: "/charts",
