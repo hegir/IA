@@ -1,3 +1,6 @@
+$brand-color: $info-color;
+$color-gray: #3c4858;
+
 .validation-block
 {
     text-align: left !important;
@@ -7,4 +10,136 @@
 .input-group, .form-group
 {
     margin-bottom: 5px !important;
+}
+
+.dropdown-border {
+    border: none !important;
+    height: 27px !important;
+}
+.dropdown-font {
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif !important;
+    color: #2c2c2c !important;
+    font-size: 0.8571em !important;
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+.m-0{
+    margin:0px !important
+}
+
+.icon-item-title {
+    display: block !important;
+    font-size: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    margin-top:-5px !important;
+    text-transform: initial !important;
+}
+.btn-just-icon{
+    padding:0px !important;
+    padding-bottom: 5px !important;
+    padding-top: 5px !important;
+    background:none;
+    border: 0px;
+    position: relative;
+    display: inline-block;
+    top: 0;
+    margin-top: -5px;
+    margin-bottom: -0.5em;
+    font-size: 1.1rem;
+}
+.btn-just-icon:hover{
+    background:none;
+    cursor: pointer;
+}
+.btn-just-icon:focus{
+    background: none;
+}
+body .ui-table .ui-table-thead > tr > th {
+    border: 0px !important;
+}
+body .ui-table .ui-table-tbody > tr > td {
+    border: 0px !important;
+    border-top: 1px solid #dee2e6 !important;
+}
+body .ui-paginator {
+    border: 0px !important;
+}
+.a:active
+{
+    border-style: outset;
+}
+.a:focus {
+    outline: none;
+  }
+  .btn.btn-link:hover, .btn.btn-link:focus, .btn.btn-link:active, .navbar .navbar-nav > a.btn.btn-link:hover, .navbar .navbar-nav > a.btn.btn-link:focus, .navbar .navbar-nav > a.btn.btn-link:active{
+      background-color: transparent !important;
+  }
+
+  body .ui-table .ui-table-thead > tr > th {
+    font-size: 1.45em;
+    font-weight: 300 !important;
+    color: $brand-color !important;
+    background-color: transparent !important;
+}
+body .ui-table .ui-table-tbody > tr > td {
+    background-color: transparent !important;
+}
+body .ui-table .ui-table-tbody > tr:nth-child(even) {
+    background-color: transparent !important;
+}
+body .ui-paginator {
+    background-color: transparent !important;
+    border-top: 1px solid #dee2e6 !important;
+    padding-top: 10px !important;
+}
+
+body .ui-paginator .ui-paginator-pages .ui-paginator-page {
+    border-radius: 50% !important;
+    border: 0px !important;
+    border-style: outset !important;
+    outline: none;
+}
+body .ui-paginator .ui-paginator-first, body .ui-paginator .ui-paginator-prev, body .ui-paginator .ui-paginator-next, body .ui-paginator .ui-paginator-last {
+    border-radius: 50% !important;
+    border: 0px !important;
+    border-style: outset !important;
+    outline: none;
+}
+body .ui-table .ui-table-thead > tr > th {
+    border: 0px !important;
+    border-style: outset !important;
+    outline: none;
+}
+body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-active {
+    background-color:  $brand-color !important;
+    color: #ffffff;
+    border: 0px !important;
+    border-style: outset !important;
+    outline: none;
+}
+
+
+body .ui-table .ui-sortable-column.ui-state-highlight .ui-sortable-column-icon {
+    color: #a09797 !important;
+}
+
+.width-100
+{
+    width:100% !important;
 }

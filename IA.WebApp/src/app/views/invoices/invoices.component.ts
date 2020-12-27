@@ -4,6 +4,8 @@ import { InvoiceType } from "src/app/enums/invoiceType";
 import { Invoice } from "src/app/models/invoice";
 import { InvoicesService } from "src/app/services/invoices.service";
 import { EnumValues } from 'enum-values';
+import { InvoiceStatus } from "src/app/enums/invoiceStatus";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-invoices",
@@ -16,9 +18,11 @@ export class InvoicesComponent implements OnInit {
   totalInvoices: number = 0;
 
   public InvoiceTypes = EnumValues.getNamesAndValues(InvoiceType);
-
+  public InvoiceStatuses = EnumValues.getNamesAndValues(InvoiceStatus);
+  
   constructor(
-      private invoicesService: InvoicesService
+      private invoicesService: InvoicesService,
+      private router: Router
   ) {
       this.invoicesService.Count().then(total =>{
           this.totalInvoices = total;
@@ -33,6 +37,6 @@ export class InvoicesComponent implements OnInit {
 
   edit(invoiceId: number)
   {
-
+    this.router.navigate([`invoices/${invoiceId}`])
   }
 }

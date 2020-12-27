@@ -1,0 +1,295 @@
+<div class="panel-header panel-header-sm"></div>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <div class="card-header ">
+                    <h4 class="card-title">{{'INVOICE_DETAILS' | translate}}
+                        <span *ngIf="invoice.Id != null">
+                            <b>({{ invoice.Id }})</b>
+                        </span>
+                    </h4>
+                    <button type="button" class="btn btn-fill" (click)="back()">{{'BACK' | translate}}</button>
+                </div>
+                <div class="card-body ">
+                    <form #invoiceForm="ngForm">
+                        <label>{{'PARTNER' | translate}}</label>
+                        <div class="form-group">
+                            <input required type="text" class="form-control" name="PartnerName"
+                                [(ngModel)]="invoice.PartnerName" [disabled]="invoice.Status > 0" />
+                            <div *ngFor="let err of validationErrors?.PartnerName">
+                                <span class="help-block text-danger">{{ err }}</span>
+                            </div>
+                        </div>
+
+                        <label>{{'TYPE' | translate}}</label>
+                        <p-dropdown styleClass="dropdown-border dropdown-font width-100" [showClear]="false"
+                            class="form-control vertical-align-center" [(ngModel)]="selectedType"
+                            [options]="InvoiceTypes" name="Type" [disabled]="invoice.Status > 0"
+                            placeholder="{{'TYPE' | translate}}" optionLabel="name" (onChange)="bindTypeValue($event)">
+                            <ng-template pTemplate="item" let-item>
+                                {{item.label | uppercase | translate}}
+                            </ng-template>
+                            <ng-template let-selectedItem pTemplate="selectedItem">
+                                {{selectedItem.label | uppercase | translate}}
+                            </ng-template>
+                        </p-dropdown>
+                        <div *ngFor="let err of validationErrors?.Type">
+                            <span class="help-block text-danger">{{ err }}</span>
+                        </div>
+
+                        <label>{{'NOTE' | translate}}</label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="Note" [(ngModel)]="invoice.Note"
+                                [disabled]="invoice.Status > 0" />
+                            <div *ngFor="let err of validationErrors?.Note">
+                                <span class="help-block text-danger">{{ err }}</span>
+                            </div>
+                        </div>
+
+                        <ng-container *ngIf="invoice.Status > 0">
+                            <label>{{'INV_NUMBER' | translate}}</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="InvoiceNumber"
+                                    [(ngModel)]="invoice.InvoiceNumber" disabled />
+                            </div>
+                        </ng-container>
+
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div *ngIf="invoiceId == '0' || invoice.Status == 0">
+                                <button type="button" class="btn btn-fill float-right btn-primary"
+                                    (click)="saveInvoice(invoiceForm)">{{'SUBMIT' | translate}}</button>
+                            </div>
+
+                            <div *ngIf="invoiceId != '0' && invoice.Status == 0 && invoiceItems.length > 0">
+                                <button type="button" class="btn btn-fill float-right btn-primary"
+                                    (click)="approveInvoice(invoiceForm)">{{'APPROVE' | translate}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card" *ngIf="invoiceId != '0'">
+                <div class="card-header ">
+                    <h4 class="card-title">{{'INVOICE_ITEMS' | translate}}
+                    </h4>
+                    <div class="card-body">
+                        <form #invoiceItemForm="ngForm" *ngIf="invoice.Status == 0">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label>{{'ITEM_NAME' | translate}}</label>
+                                    <div class="form-group">
+                                        <input required type="text" class="form-control" name="Name"
+                                            [(ngModel)]="invoiceItem.Name" />
+                                        <div *ngFor="let err of validationErrorsItem?.Name">
+                                            <span class="help-block text-danger">{{ err }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>{{'QUANTITY' | translate}}</label>
+                                    <div class="form-group">
+                                        <input required type="number" class="form-control" name="Quantity"
+                                            [(ngModel)]="invoiceItem.Quantity" />
+                                        <div *ngFor="let err of validationErrorsItem?.Quantity">
+                                            <span class="help-block text-danger">{{ err }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>{{'PRICE' | translate}}</label>
+                                    <div class="form-group">
+                                        <input required type="number" class="form-control" name="Price"
+                                            [(ngModel)]="invoiceItem.Price" />
+                                        <div *ngFor="let err of validationErrorsItem?.Price">
+                                            <span class="help-block text-danger">{{ err }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>{{'RABAT' | translate}}</label>
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" name="Rabat"
+                                            [(ngModel)]="invoiceItem.Rabat" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>{{'PR_WO_VAT' | translate}}</label>
+                                    <div class="form-group">
+                                        <input disabled type="number" class="form-control" name="PriceWithoutVat"
+                                            [(ngModel)]="invoiceItem.PriceWithoutVat" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>{{'RABAT_VALUE' | translate}}</label>
+                                    <div class="form-group">
+                                        <input disabled type="number" class="form-control" name="RabatValue"
+                                            [(ngModel)]="invoiceItem.RabatValue" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>{{'PR_W_RABAT_WO_VAT' | translate}}</label>
+                                    <div class="form-group">
+                                        <input disabled type="number" class="form-control"
+                                            name="PriceWithRabatWithoutVat"
+                                            [(ngModel)]="invoiceItem.PriceWithRabatWithoutVat" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>{{'VAT_VALUE' | translate}}</label>
+                                    <div class="form-group">
+                                        <input disabled type="number" class="form-control" name="VatValue"
+                                            [(ngModel)]="invoiceItem.VatValue" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>{{'TOTAL' | translate}}</label>
+                                    <div class="form-group">
+                                        <input disabled type="number" class="form-control" name="Total"
+                                            [(ngModel)]="invoiceItem.Total" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1 pt-3">
+                                    <div>
+                                        <button type="button" class="btn btn-fill float-right btn-primary"
+                                            (click)="saveInvoiceItem(invoiceItemForm)">{{'ADD' | translate}}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <br>
+                        <br>
+
+                        <div class="row" *ngIf="invoiceItems != null && invoiceItems.length > 0">
+                            <p-table #dt [value]="invoiceItems" [responsive]="true" sortOrder="-1">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="text-right">
+                                            {{'NAME' | translate}}
+                                        </th>
+                                        <th class="text-right">
+                                            {{'QUANTITY' | translate}}
+                                        </th>
+                                        <th class="text-right">
+                                            {{'PRICE' | translate}}
+                                        </th>
+                                        <th class="text-right">
+                                            {{'RABAT' | translate}}
+                                        </th>
+                                        <th class="text-right">
+                                            {{'PR_WO_VAT'
+                                            | translate}}
+                                        </th>
+                                        <th class="text-right">
+                                            {{'RABAT_VALUE'
+                                            | translate}}
+                                        </th>
+                                        <th class="text-right">
+                                            {{'PR_W_RAB_WO_VAT'
+                                            | translate}}
+                                        </th>
+                                        <th class="text-right">
+                                            {{'VAT_VALUE'
+                                            | translate}}
+                                        </th>
+                                        <th class="text-right">
+                                            {{'TOTAL'
+                                            | translate}}
+                                        </th>
+                                <th class="text-right">{{'OPTIONS' | translate}}</th>
+
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'NAME' |
+                                                translate }}</span>{{item.Name}}
+                                        </td>
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'QUANTITY' |
+                                                translate
+                                                }}</span>{{ item.Quantity || '-'}}
+                                        </td>
+
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'PRICE' | translate
+                                                }}</span>{{ item.Price  | formatCurrency}}
+                                        </td>
+
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'RABAT' | translate
+                                                }}</span>{{ item.Rabat | formatCurrency }}
+                                        </td>
+
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'PR_WO_VAT' | translate
+                                                }}</span>{{ item.PriceWithoutVat  | formatCurrency}}
+                                        </td>
+
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'RABAT_VALUE' | translate
+                                                }}</span>{{ item.RabatValue  | formatCurrency}}
+                                        </td>
+
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'PR_W_RAB_WO_VAT' | translate
+                                                }}</span>{{ item.PriceWithRabatWithoutVat  | formatCurrency}}
+                                        </td>
+
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'VAT_VALUE' | translate
+                                                }}</span>{{ item.VatValue  | formatCurrency}}
+                                        </td>
+
+                                        <td class="text-right"><span
+                                                class="ui-column-title text-left float-left">{{'TOTAL' | translate
+                                                }}</span>{{ item.Total  | formatCurrency}}
+                                        </td>
+
+                                        <td class="text-right"><span class="ui-column-title text-left float-left">{{'OPTIONS' |
+                                            translate }}</span>
+                                        <a (click)="removeItem(item.Id)"
+                                            class="btn text-info btn-link btn-just-icon edit width-auto">
+                                            <i class="now-ui-icons ui-1_simple-remove"></i>
+                                            <span class="icon-item-title text-info">{{ 'REMOVE' | translate
+                                                }}</span></a>
+                                    </td>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <td colspan="2">{{'PR_WO_VAT' | translate}}: {{invoice.PriceWithoutVat | formatCurrency}}</td>
+                                        <td colspan="2">{{'RABAT_VALUE' | translate}}: {{invoice.RabatValue | formatCurrency}}</td>
+                                        <td colspan="2">{{'PR_W_RAB_WO_VAT' | translate}}: {{invoice.PriceWithRabatWithoutVat | formatCurrency}}</td>
+                                        <td colspan="2">{{'VAT' | translate}}: {{invoice.VatValue | formatCurrency}}</td>
+                                        <td colspan="2">{{'TOTAL' | translate}}: {{invoice.Total | formatCurrency}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

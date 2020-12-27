@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   apiEndpoint: "https://localhost:44311/api/",
   defaultLanguage: 'bs',
-  defaultCurrency: 'USD'
+  defaultCurrency: 'BAM'
 };
 
 /*

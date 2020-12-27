@@ -7,6 +7,7 @@ import { InvoicesRoutes } from "./invoices.routing";
 import { InvoicesComponent } from "./invoices.component";
 import { SharedModule } from "src/app/shared/shared.module";
 import {DropdownModule} from 'primeng/dropdown';
+import { InvoiceDetailsComponent } from "./details/invoice-details.component";
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {DropdownModule} from 'primeng/dropdown';
     SharedModule
   ],
   declarations: [
-    InvoicesComponent
+    InvoicesComponent,
+    InvoiceDetailsComponent
   ]
 })
 export class InvoicesModule {}

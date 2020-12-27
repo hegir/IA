@@ -42,6 +42,39 @@ namespace IA.Model
         [NotMapped]
         public InvoiceAction? Action { get; set; }
 
+        [NotMapped]
+        public double PriceWithoutVat { get; set; }
+
+        [NotMapped]
+        public double RabatValue { get; set; }
+
+        [NotMapped]
+        public double PriceWithRabatWithoutVat
+        {
+            get
+            {
+                    return PriceWithoutVat - RabatValue;
+            }
+        }
+
+        [NotMapped]
+        public double VatValue
+        {
+            get
+            {
+                return Math.Round(PriceWithRabatWithoutVat * 0.17, 2);
+            }
+        }
+
+        [NotMapped]
+        public double Total
+        {
+            get
+            {
+                return PriceWithRabatWithoutVat + VatValue;
+            }
+        }
+
 
         #region Methods
 

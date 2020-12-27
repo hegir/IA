@@ -3,6 +3,9 @@
     "INVALID_FORMAT": "Format nije validan",
     "CREATE_AN_ACCOUNT": "Kreirajte nalog",
     "LOGIN": "Prijava",
-    "INVOICE_APP": "Invoice app"
+    "INVOICE_APP": "Invoice app",
+    "INVOICE_DETAILS_SHORT": "Detalji",
+    "PURCHASE": "Ulazna",
+    "SALES": "Izlazna"
 
 }

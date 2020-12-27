@@ -5,7 +5,6 @@ export class InvoiceItem {
     Price: number;
     Rabat: number | null;
     InvoiceId: number;
-    VatPercentage: number;
     PriceWithoutVat: number;
     RabatValue: number;
     PriceWithRabatWithoutVat: number;

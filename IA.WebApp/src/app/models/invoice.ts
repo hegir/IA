@@ -9,9 +9,15 @@ export class Invoice {
     InvoiceNumber: string;
     PartnerName: string;
     Added: Date;
-    addedBy: number;
+    AddedBy: number;
     Status: InvoiceStatus;
     Note: string;
     Items: InvoiceItem[];
     Action: InvoiceAction | null;
+
+    PriceWithoutVat: number;
+    RabatValue: number;
+    PriceWithRabatWithoutVat: number;
+    VatValue: number;
+    Total: number;
 }

@@ -39,7 +39,10 @@ namespace IA.Repository.Dapper
 
         public IEnumerable<Invoice> FindAll(int userId)
         {
-            string query = @"select * from invoices i where i.added_by = @userId";
+            string query = @"select i.*,
+(SELECT SUM(quantity * price) FROM invoice_items WHERE invoice_id = i.id) AS price_without_vat,
+(SELECT SUM((quantity * price) * (coalesce(rabat,1)/100)) FROM invoice_items WHERE invoice_id = i.id) AS rabat_value
+from invoices i where i.added_by = @userId ORDER BY i.id desc";
 
             ISessionScope sc = _sessionScopeFactory.Find(Thread.CurrentThread);
             if (sc != null)
@@ -54,6 +57,33 @@ namespace IA.Repository.Dapper
                 using (DataAccessBase db = new DataAccessBase(_connectionFactory.GetConnection, _connectionFactory.Transaction))
                 {
                     return db.DbConnection.Query<Invoice>(query, new { userId });
+                }
+            }
+        }
+
+
+        public override Invoice TryFind(int id)
+        {
+            ISessionScope sc = _sessionScopeFactory.Find(Thread.CurrentThread);
+            string query = @"SELECT i.*,
+(SELECT SUM(quantity * price) FROM invoice_items WHERE invoice_id = i.id) AS price_without_vat,
+(SELECT SUM((quantity * price) * (coalesce(rabat,1)/100)) FROM invoice_items WHERE invoice_id = i.id) AS rabat_value
+FROM invoices i
+WHERE i.id = @id
+";
+            if (sc != null)
+            {
+                using (DataAccessBase db = new DataAccessBase(sc.Connection))
+                {
+                    return db.DbConnection.QuerySingleOrDefault<Invoice>(query, new { id });
+                }
+            }
+            else
+            {
+                using (DataAccessBase db = new DataAccessBase(_connectionFactory.GetConnection, _connectionFactory.Transaction))
+                {
+                    return db.DbConnection.QuerySingleOrDefault<Invoice>(query, new { id });
+
                 }
             }
         }

@@ -1,4 +1,5 @@
 import { Routes } from "@angular/router";
+import { InvoiceDetailsComponent } from "./details/invoice-details.component";
 import { InvoicesComponent } from "./invoices.component";
 
 
@@ -11,14 +12,14 @@ export const InvoicesRoutes: Routes = [
         component: InvoicesComponent
       }
     ]
+  },
+  {
+    path: "",
+    children: [
+      {
+        path: ":id",
+        component: InvoiceDetailsComponent
+      }
+    ]
   }
-  // {
-  //   path: "",
-  //   children: [
-  //     {
-  //       path: ":id",
-  //       component: ExtendedTablesComponent
-  //     }
-  //   ]
-  // }
 ];

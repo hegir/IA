@@ -85,7 +85,13 @@ namespace IA.Api.Controllers
 
                         sc.Commit();
                     }
-                    return Ok(entity);
+                    SaveInvoiceItemDto returnModel = new SaveInvoiceItemDto
+                    {
+                        Invoice = _repositoryInvoice.TryFind(invoiceId),
+                        InvoiceItem = entity
+                    };
+
+                    return Ok(returnModel);
                 }
                 return BadRequest(ModelState);
             }

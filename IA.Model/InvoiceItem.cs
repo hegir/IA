@@ -30,9 +30,6 @@ namespace IA.Model
         public int InvoiceId { get; set; }
 
         [NotMapped]
-        public int VatPercentage { get; set; } = 17;
-
-        [NotMapped]
         public double PriceWithoutVat
         {
             get
@@ -68,7 +65,7 @@ namespace IA.Model
         {
             get
             {
-                return Math.Round((PriceWithRabatWithoutVat * (100 / VatPercentage)), 2);
+                return Math.Round(PriceWithRabatWithoutVat * 0.17, 2);
             }
         }
 

@@ -21,6 +21,9 @@ import { TokenStorage } from "./core/tokenstorage.service";
 import { NotificationsService } from "./core/notifications.service";
 import { SpinnerService } from "./core/spinner.service";
 import { StorageService } from "./core/storage.service";
+import { registerLocaleData } from '@angular/common';
+import localeBs from '@angular/common/locales/bs';
+registerLocaleData(localeBs, 'bs');
 
 @NgModule({
   declarations: [AppComponent, AdminLayoutComponent, AuthLayoutComponent],

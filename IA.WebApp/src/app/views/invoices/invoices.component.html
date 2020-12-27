@@ -9,13 +9,15 @@
                         <i class="material-icons">group</i>
                     </div>
                     <button type="button" (click)="edit(0)"
-                        class="btn btn-brand float-right m-0">{{'ADD_NEW_INVOICE' | translate}}</button>
+                        class="btn btn-primary float-right m-0 mb-4">{{'ADD_NEW_INVOICE' |
+                        translate}}</button>
+                    <br>
+
                 </div>
                 <div class="card-body">
 
-                    <p-table  #dt [value]="invoices" [paginator]="true" [responsive]="true" [rows]="10" sortOrder="-1"
-                        [rowsPerPageOptions]="[10,20,30,40,50,100]"
-                        [totalRecords]="totalInvoices">
+                    <p-table #dt [value]="invoices" [paginator]="true" [responsive]="true" [rows]="10" sortOrder="-1"
+                        [rowsPerPageOptions]="[10,20,30,40,50,100]" [totalRecords]="totalInvoices">
                         <ng-template pTemplate="header">
                             <tr>
                                 <th class="text-right" [pSortableColumn]="'Id'">
@@ -27,36 +29,93 @@
                                 <th class="text-right" [pSortableColumn]="'Type'">
                                     <p-sortIcon [field]="'Type'"></p-sortIcon>{{'TYPE' | translate}}
                                 </th>
+                                <th class="text-right" [pSortableColumn]="'PartnerName'">
+                                    <p-sortIcon [field]="'PartnerName'"></p-sortIcon>{{'PARTNER' | translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'Added'">
+                                    <p-sortIcon [field]="'Added'"></p-sortIcon>{{'ADDED' | translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'Status'">
+                                    <p-sortIcon [field]="'Status'"></p-sortIcon>{{'STATUS' | translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'PriceWithoutVat'">
+                                    <p-sortIcon [field]="'PriceWithoutVat'"></p-sortIcon>{{'PRICE_WITHOUT_VAT' |
+                                    translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'RabatValue'">
+                                    <p-sortIcon [field]="'RabatValue'"></p-sortIcon>{{'RABAT_VALUE' | translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'PriceWithRabatWithoutVat'">
+                                    <p-sortIcon [field]="'PriceWithRabatWithoutVat'"></p-sortIcon>{{'PR_W_RABAT_WO_VAT'
+                                    | translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'VatValue'">
+                                    <p-sortIcon [field]="'VatValue'"></p-sortIcon>{{'VAT' | translate}}
+                                </th>
+                                <th class="text-right" [pSortableColumn]="'Total'">
+                                    <p-sortIcon [field]="'Total'"></p-sortIcon>{{'TOTAL' | translate}}
+                                </th>
+
                                 <th class="text-right">{{'OPTIONS' | translate}}</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-invoice>
                             <tr>
-                                <td class="text-right"><span
-                                        class="ui-column-title text-left float-left">{{'ID' | translate }}</span>{{invoice.Id}}
+                                <td class="text-right"><span class="ui-column-title text-left float-left">{{'ID' |
+                                        translate }}</span>{{invoice.Id}}
                                 </td>
                                 <td class="text-right"><span
-                                        class="ui-column-title text-left float-left">{{'INVOICE_NUMBER' | translate }}</span>{{invoice.InvoiceNumber || '-'}}
+                                        class="ui-column-title text-left float-left">{{'INVOICE_NUMBER' | translate
+                                        }}</span>{{invoice.InvoiceNumber || '-'}}
+                                </td>
+                                <td class="text-right"><span class="ui-column-title text-left float-left">{{'TYPE' |
+                                        translate }}</span>{{InvoiceTypes[invoice.Type].name | uppercase | translate }}
+                                </td>
+                                <td class="text-right"><span class="ui-column-title text-left float-left">{{'PARTNER' |
+                                        translate
+                                        }}</span>{{invoice.PartnerName || '-'}}
+                                </td>
+                                <td class="text-right"><span class="ui-column-title text-left float-left">{{'ADDED' |
+                                        translate
+                                        }}</span>{{invoice.Added | dateFormat }}
+                                </td>
+                                <td class="text-right"><span class="ui-column-title text-left float-left">{{'STATUS' |
+                                        translate
+                                        }}</span>{{ InvoiceStatuses[invoice.Status].name}}
                                 </td>
                                 <td class="text-right"><span
-                                        class="ui-column-title text-left float-left">{{'TYPE' | translate }}</span>{{InvoiceTypes[invoice.Type].name}}
+                                        class="ui-column-title text-left float-left">{{'PRICE_WO_VAT' | translate
+                                        }}</span>{{invoice.PriceWithoutVat | formatCurrency}}
                                 </td>
                                 <td class="text-right"><span
-                                        class="ui-column-title text-left float-left">{{'OPTIONS' | translate }}</span>
+                                        class="ui-column-title text-left float-left">{{'RABAT_VALUE' | translate
+                                        }}</span>{{invoice.RabatValue | formatCurrency}}
+                                </td>
+                                <td class="text-right"><span
+                                        class="ui-column-title text-left float-left">{{'PR_W_RABAT_WO_VAT' | translate
+                                        }}</span>{{invoice.PriceWithRabatWithoutVat | formatCurrency}}
+                                </td>
+                                <td class="text-right"><span class="ui-column-title text-left float-left">{{'VAT' |
+                                        translate
+                                        }}</span>{{invoice.VatValue | formatCurrency}}
+                                </td>
+                                <td class="text-right"><span class="ui-column-title text-left float-left">{{'TOTAL' |
+                                        translate
+                                        }}</span>{{invoice.Total | formatCurrency}}
+                                </td>
+                                <td class="text-right"><span class="ui-column-title text-left float-left">{{'OPTIONS' |
+                                        translate }}</span>
                                     <a (click)="edit(invoice.Id)"
                                         class="btn text-info btn-link btn-just-icon edit width-auto">
                                         <i class="now-ui-icons users_single-02"></i>
-                                        <span
-                                            class="icon-item-title text-info">{{ 'INVOICE_DETAILS_SHORT' | translate }}</span></a>
+                                        <span class="icon-item-title text-info">{{ 'INVOICE_DETAILS_SHORT' | translate
+                                            }}</span></a>
                                 </td>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="emptymessage">
                             <tr>
-                                <td colspan="4" class="text-center text-info">
-                                    <span class="btn-label">
-                                        <i class="material-icons">info</i>
-                                    </span>
+                                <td colspan="12" class="text-center text-info">
                                     {{'NO_DATA' | translate}}
                                 </td>
                             </tr>

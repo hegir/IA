@@ -38,8 +38,8 @@ export abstract class BaseCrudService<T>{
         .toPromise()
         .then( res => {return <T> res;})
     }
-    public Update(data: T): Promise<T>{
-        return this.requestService.put(this.controller,data)
+    public Update(id: string, data: T): Promise<T>{
+        return this.requestService.put(this.controller.concat(id),data)
         .toPromise()
         .then( res=> { return <T> res;})
     }

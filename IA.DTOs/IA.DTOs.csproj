@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IA.Enums\IA.Enums.csproj" />
+    <ProjectReference Include="..\IA.Model\IA.Model.csproj" />
   </ItemGroup>
 
 </Project>
