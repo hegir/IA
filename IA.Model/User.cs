@@ -37,15 +37,9 @@ namespace IA.Model
         [Column("role_id")]
         public string RoleId { get; set; }
 
-        [Column("birth_date")]
-        public DateTime BirthDate { get; set; }
-
         [Column("phone_number")]
         [RegularExpression(@"^[+]?[0-9-/]*$", ErrorMessage = "MOBILE_PHONE_NUMBER_IS_INVALID")]
         public string PhoneNumber { get; set; }
-
-        [Column("gender")]
-        public Gender Gender { get; set; }
 
         [NotMapped]
         public string FullName { get { return FirstName + " " + LastName; } }
