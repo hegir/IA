@@ -26,4 +26,11 @@ export class InvoicesService extends BaseCrudService<Invoice>{
       .toPromise()
       .then(res =>{return<SaveInvoiceItemDto>res});
   }
+
+  public async DeleteItem(invoiceId: string, itemId: string):Promise<Invoice>
+  {
+      return this.requestService.delete(`${this.controller}${invoiceId}/items/${itemId}`)
+      .toPromise()
+      .then(res =>{return<Invoice>res});
+  }
 }

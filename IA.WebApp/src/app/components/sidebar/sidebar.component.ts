@@ -4,6 +4,7 @@ import { ToastrService } from "ngx-toastr";
 import { AuthenticationService } from "src/app/core/authentication.service";
 import { RequestService } from "src/app/core/request.service";
 import { TokenStorage } from "src/app/core/tokenstorage.service";
+import { UsersService } from "src/app/services/users.service";
 
 var misc:any ={
     sidebar_mini_active: true
@@ -36,35 +37,10 @@ export const ROUTES: RouteInfo[] = [
     icontype: "design_app"
   },
   {
-    path: "/tables",
-    title: "Tables",
-    type: "sub",
-    icontype: "design_bullet-list-67",
-    collapse: "tables",
-    isCollapsed: true,
-    children: [
-      { path: "regular", title: "Regular Tables", ab: "RT" },
-      { path: "extended", title: "Extended Tables", ab: "ET" },
-      { path: "ngx-datatable", title: "Ngx Datatable", ab: "ND" }
-    ]
-  },
-  {
     path: "/invoices",
     title: "Invoices",
     type: "link",
     icontype: "education_agenda-bookmark"
-  },
-  {
-    path: "/charts",
-    title: "Charts",
-    type: "link",
-    icontype: "business_chart-pie-36"
-  },
-  {
-    path: "/calendar",
-    title: "Calendar",
-    type: "link",
-    icontype: "media-1_album"
   }
 ];
 
@@ -72,7 +48,7 @@ export const ROUTES: RouteInfo[] = [
   selector: "app-sidebar",
   templateUrl: "./sidebar.component.html",
   styleUrls: ["./sidebar.component.css"],
-  providers: [TokenStorage, AuthenticationService, RequestService]
+  providers: [TokenStorage, AuthenticationService, RequestService, UsersService]
 })
 export class SidebarComponent implements OnInit {
   public menuItems: any[];
@@ -83,6 +59,7 @@ export class SidebarComponent implements OnInit {
   constructor(
     private tokenStorage: TokenStorage,
     private authService: AuthenticationService,
+    private userService: UsersService,
     private router: Router) {
       this.userFullName = this.tokenStorage.getFullName();
   }
@@ -178,11 +155,9 @@ export class SidebarComponent implements OnInit {
 
   logout()
   {
-    this.authService.logout();
+    this.userService.LogOut().then(z => {
+      this.authService.logout();
+    })
   }
 
-  navigateToUserDetails()
-  {
-    this.router.navigate(['users']);
-  }
 }

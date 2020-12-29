@@ -112,6 +112,19 @@
               <div class="validation-block" *ngFor="let err of validationErrors?.Password">
                 <span class="help-block text-danger">{{ err }}</span>
               </div>
+
+              <div class="input-group pb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">
+                    <i class="now-ui-icons ui-1_lock-circle-open"></i>
+                  </div>
+                </div>
+                <input type="password" class="form-control" placeholder="Repeat password..." [(ngModel)]="user.RepeatPassword"
+                  name="RepeatPassword" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,.>])[A-Za-z\d!@#$%^&*()-_=+{};:,.>]{6,}$"/>
+              </div>
+              <div class="validation-block" *ngFor="let err of validationErrors?.RepeatPassword">
+                <span class="help-block text-danger">{{ err }}</span>
+              </div>
               
               <div class="input-group pb-2">
                 <div class="input-group-prepend">

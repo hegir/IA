@@ -8,10 +8,9 @@ export class User{
   Username:string;
   Status:UserStatus;
   RoleId:string;
-  BirthDate:Date; //TODO:: ADD
   PhoneNumber:string;
   Email:string;
-  Gender:Gender; //TODO:: ADD
   Password:string;
+  RepeatPassword:string;
   FullName: string;
 }

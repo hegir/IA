@@ -3,17 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using IA.Api.Attributes;
-using IA.Cache;
-using IA.DTOs;
 using IA.Model;
-using IA.Providers;
 using IA.Repository;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using IA.Api.Attributes;
 
 namespace IA.Api.Controllers
 {
@@ -45,7 +38,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{id:int}")]
-        //[Permission("P_USERS")]
+        [Permission("P_INVOICES")]
         public IActionResult Get(int id)
         {
             return Ok(_repositoryInvoice.TryFind(id));
@@ -57,7 +50,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("count")]
-        //[Permission("P_USERS")]
+        [Permission("P_INVOICES")]
         public IActionResult Count()
         {
             return Ok(_repositoryInvoice.CountAll(User.GetUserId()));
@@ -69,7 +62,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("")]
-        //[Permission("P_USERS")]
+        [Permission("P_INVOICES")]
         public IActionResult GetAll()
         {
             return Ok(_repositoryInvoice.FindAll(User.GetUserId()));
@@ -83,6 +76,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("")]
+        [Permission("P_INVOICES")]
         public IActionResult Post([FromBody] Invoice entity)
         {
             try
@@ -119,6 +113,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("{id:int}")]
+        [Permission("P_INVOICES")]
         public IActionResult Update([FromBody] Invoice entity, [FromRoute] int id)
         {
             try
@@ -131,27 +126,24 @@ namespace IA.Api.Controllers
                         {
                             Invoice existingEntity = _repositoryInvoice.TryFind(id);
 
-                            if (existingEntity == null)
+                            IActionResult validateResult = ValidateInvoice(existingEntity);
+                            if (validateResult != null)
                             {
                                 sc.Rollback();
-                                return NotFound();
-                            }
-
-                            if (existingEntity.AddedBy != User.GetUserId())
-                            {
-                                sc.Rollback();
-                                return Forbid();
-                            }
-
-                            if(existingEntity.Status == Enums.InvoiceStatus.Approved)
-                            {
-                                sc.Rollback();
-                                return BadRequest("CANNOT_UPDATE_APPROVED_INVOICE");
+                                return validateResult;
                             }
 
                             entity.Id = id;
 
                             entity.SetStatus();
+
+                            switch(entity.Action)
+                            {
+                                case Enums.InvoiceAction.Approve:
+                                    entity.InvoiceNumber = entity.Id.ToString("000000") + "/" + DateTime.UtcNow.Year;
+                                    break;
+                            }
+
                             _repositoryInvoice.Update(entity);
 
                             sc.Commit();
@@ -172,6 +164,79 @@ namespace IA.Api.Controllers
                 _logger.LogError(ex, "Update {{Type}} ERROR", entity.GetType());
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+        }
+
+
+        /// <summary>
+        /// Deletes the specified identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="invoiceId">The invoice identifier.</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id:int}")]
+        [Permission("P_INVOICES")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            try
+            {
+                using (var sc = _sessionManager.Create())
+                {
+                    try
+                    {
+                        Invoice invoice = _repositoryInvoice.TryFind(id);
+
+                        IActionResult validateResult = ValidateInvoice(invoice);
+                        if (validateResult != null)
+                        {
+                            sc.Rollback();
+                            return validateResult;
+                        }
+
+                        _repositoryInvoice.Delete(id);
+
+                        sc.Commit();
+                    }
+                    catch (Exception inEx)
+                    {
+                        sc.Rollback();
+                        _logger.LogError(inEx, "Delete {{Type}} ERROR");
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    }
+                }
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Delete {{Type}} ERROR");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+        /// <summary>
+        /// Validates the invoice.
+        /// </summary>
+        /// <param name="invoice">The invoice.</param>
+        /// <returns></returns>
+        private IActionResult ValidateInvoice(Invoice invoice)
+        {
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            if (invoice.AddedBy != User.GetUserId())
+            {
+                return Forbid();
+            }
+
+            if (invoice.Status == Enums.InvoiceStatus.Approved)
+            {
+                return BadRequest("CANNOT_MODIFY_APPROVED_INVOICE");
+            }
+
+            return null;
         }
 
     }

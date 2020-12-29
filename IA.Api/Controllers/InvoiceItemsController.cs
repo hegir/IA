@@ -3,17 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using IA.Api.Attributes;
-using IA.Cache;
 using IA.DTOs;
 using IA.Model;
-using IA.Providers;
 using IA.Repository;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using IA.Api.Attributes;
 
 namespace IA.Api.Controllers
 {
@@ -48,7 +42,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("")]
-        //[Permission("P_USERS")]
+        [Permission("P_INVOICES")]
         public IActionResult Get(int invoiceId)
         {
             return Ok(_repositoryInvoiceItem.Find(x => x.InvoiceId == invoiceId));
@@ -62,6 +56,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("")]
+        [Permission("P_INVOICES")]
         public IActionResult Post([FromBody] InvoiceItem entity, [FromRoute] int invoiceId)
         {
             try
@@ -110,6 +105,7 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("{id:int}")]
+        [Permission("P_INVOICES")]
         public IActionResult Update([FromBody] InvoiceItem entity, [FromRoute] int id, int invoiceId)
         {
             try
@@ -170,17 +166,17 @@ namespace IA.Api.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("{id:int}")]
+        [Permission("P_INVOICES")]
         public IActionResult Delete([FromRoute] int id, int invoiceId)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
+                Invoice invoice;
                     using (var sc = _sessionManager.Create())
                     {
                         try
                         {
-                            Invoice invoice = _repositoryInvoice.TryFind(invoiceId);
+                            invoice = _repositoryInvoice.TryFind(invoiceId);
 
                             IActionResult validateResult = ValidateInvoice(invoice);
                             if (validateResult != null)
@@ -198,6 +194,8 @@ namespace IA.Api.Controllers
 
                             _repositoryInvoiceItem.Delete(id);
 
+                            invoice = _repositoryInvoice.TryFind(invoiceId);
+
                             sc.Commit();
                         }
                         catch (Exception inEx)
@@ -207,9 +205,7 @@ namespace IA.Api.Controllers
                             return StatusCode(StatusCodes.Status500InternalServerError);
                         }
                     }
-                    return Ok(true);
-                }
-                return BadRequest(ModelState);
+                    return Ok(invoice);
             }
             catch (Exception ex)
             {
@@ -238,7 +234,7 @@ namespace IA.Api.Controllers
 
             if (invoice.Status == Enums.InvoiceStatus.Approved)
             {
-                return BadRequest("CANNOT_UPDATE_APPROVED_INVOICE");
+                return BadRequest("CANNOT_MODIFY_APPROVED_INVOICE");
             }
 
             return null;

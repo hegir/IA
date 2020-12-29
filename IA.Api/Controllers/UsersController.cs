@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using IA.Api.Attributes;
 using IA.Cache;
-using IA.DTOs;
 using IA.Model;
 using IA.Providers;
 using IA.Repository;
@@ -27,12 +26,14 @@ namespace IA.Api.Controllers
         private readonly ISessionManager _sessionManager;
         private readonly ISecurityProvider _securityProvider;
         private readonly ICacheProvider _cacheProvider;
+        private readonly IRepositoryRefreshToken _repositoryRefreshToken;
 
         public UsersController(IRepositoryUser repository,
             ILogger<UsersController> logger,
             ISessionManager sessionManager,
             ISecurityProvider securityProvider,
-            ICacheProvider cacheProvider
+            ICacheProvider cacheProvider,
+            IRepositoryRefreshToken repositoryRefreshToken
            )
         {
             _repositoryUser = repository;
@@ -40,6 +41,7 @@ namespace IA.Api.Controllers
             _sessionManager = sessionManager;
             _securityProvider = securityProvider;
             _cacheProvider = cacheProvider;
+            _repositoryRefreshToken = repositoryRefreshToken;
         }
 
         /// <summary>
@@ -126,48 +128,29 @@ namespace IA.Api.Controllers
             }
         }
 
+
         /// <summary>
-        /// Change password for user
+        /// User log out. This action will delete all valid refresh tokens for the user.
         /// </summary>
         /// <returns></returns>
-        [HttpPut]
-        [Route("passwordchange")]
-        [Permission("P_USERS_EDIT")]
-        public IActionResult PasswordChange([FromBody] PasswordChangeDto passwordChangeDto)
+        [HttpPost]
+        [Route("logout")]
+        public IActionResult LogOut()
         {
             try
             {
-                if (ModelState.IsValid)
+                using (var sc = _sessionManager.Create())
                 {
-                    User user = _repositoryUser.TryFind(User.GetUserId());
-
-                    if (user == null)
-                        return NotFound();
-
-                    if (user.PasswordHash != _securityProvider.CreateMD5(passwordChangeDto.OldPassword))
-                    {
-                        return BadRequest("OLD_PASSWORD_NOT_CORRECT");
-                    }
-
-                    if (passwordChangeDto.OldPassword == passwordChangeDto.Password)
-                    {
-                        return BadRequest("PASSWORD_SAME_AS_OLD");
-                    }
-
-                    user.PasswordHash = _securityProvider.CreateMD5(passwordChangeDto.Password);
-
-                    _repositoryUser.Update(user);
-
-                    return Ok(true);
+                    _repositoryRefreshToken.DeleteAll(User.GetUserId());
+                    sc.Commit();
                 }
-                return BadRequest(ModelState);
+                return Ok(true);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Password Change ({Type}) ERROR", passwordChangeDto.GetType());
+                _logger.LogError(ex, "LogOut() ERROR");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
     }
 }

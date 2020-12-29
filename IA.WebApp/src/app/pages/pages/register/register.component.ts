@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     var image_container = document.createElement("div");
     image_container.classList.add("full-page-background");
     $page.classList.add("register-page");
-    image_container.style.backgroundImage = "url(assets/img/bg16.jpg)";
+    image_container.style.backgroundImage = "url(assets/img/bg13.jpg)";
     $page.appendChild(image_container);
   }
   ngOnDestroy() {
@@ -42,12 +42,17 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   register()
   {
+
     this.validationErrors = {};
-    if (this.registerForm.invalid) {
-      this.validationErrors = this.validationService.PrepareRequiredFieldErrors(this.registerForm);
-      console.log(this.validationErrors);
-      return;
+    if (this.registerForm.invalid)
+        this.validationErrors = this.validationService.PrepareRequiredFieldErrors(this.registerForm);
+
+    if (this.user.Password !== this.user.RepeatPassword) {
+        this.validationErrors["RepeatPassword"] = new Array();
+        this.validationErrors["RepeatPassword"].push("Passwords don't match");
     }
+
+    if (Object.keys(this.validationErrors).length > 0) return;
 
     this.usersService.Save(this.user).then(x =>{
       if(x != null)

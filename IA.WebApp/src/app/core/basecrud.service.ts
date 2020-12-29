@@ -43,7 +43,9 @@ export abstract class BaseCrudService<T>{
         .toPromise()
         .then( res=> { return <T> res;})
     }
-    public Delete(id : string): Observable<any>{
-        return this.requestService.delete(this.controller.concat(id));
+    public Delete(id : string): Promise<T>{
+        return this.requestService.delete(this.controller.concat(id))
+        .toPromise()
+        .then(res => { return <T> res;})
     }
 }

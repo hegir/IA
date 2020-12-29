@@ -41,7 +41,7 @@ namespace IA.Repository.Dapper
         {
             string query = @"select i.*,
 (SELECT SUM(quantity * price) FROM invoice_items WHERE invoice_id = i.id) AS price_without_vat,
-(SELECT SUM((quantity * price) * (coalesce(rabat,1)/100)) FROM invoice_items WHERE invoice_id = i.id) AS rabat_value
+(SELECT SUM((quantity * price) * (coalesce(rabat,0)/100)) FROM invoice_items WHERE invoice_id = i.id) AS rabat_value
 from invoices i where i.added_by = @userId ORDER BY i.id desc";
 
             ISessionScope sc = _sessionScopeFactory.Find(Thread.CurrentThread);
@@ -67,7 +67,7 @@ from invoices i where i.added_by = @userId ORDER BY i.id desc";
             ISessionScope sc = _sessionScopeFactory.Find(Thread.CurrentThread);
             string query = @"SELECT i.*,
 (SELECT SUM(quantity * price) FROM invoice_items WHERE invoice_id = i.id) AS price_without_vat,
-(SELECT SUM((quantity * price) * (coalesce(rabat,1)/100)) FROM invoice_items WHERE invoice_id = i.id) AS rabat_value
+(SELECT SUM((quantity * price) * (coalesce(rabat,0)/100)) FROM invoice_items WHERE invoice_id = i.id) AS rabat_value
 FROM invoices i
 WHERE i.id = @id
 ";

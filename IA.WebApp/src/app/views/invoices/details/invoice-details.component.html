@@ -53,6 +53,15 @@
                                 <input type="text" class="form-control" name="InvoiceNumber"
                                     [(ngModel)]="invoice.InvoiceNumber" disabled />
                             </div>
+
+                            <div class="form-group">
+                                <label>{{'ADDED' | translate}}</label>
+                                <label class="form-control">
+                                  <div>
+                                    {{ invoice.Added | dateFormat }}
+                                  </div>
+                                </label>
+                              </div>
                         </ng-container>
 
                     </form>
@@ -80,7 +89,7 @@
                     <div class="card-body">
                         <form #invoiceItemForm="ngForm" *ngIf="invoice.Status == 0">
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-5">
                                     <label>{{'ITEM_NAME' | translate}}</label>
                                     <div class="form-group">
                                         <input required type="text" class="form-control" name="Name"
@@ -91,7 +100,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <label>{{'QUANTITY' | translate}}</label>
                                     <div class="form-group">
                                         <input required type="number" class="form-control" name="Quantity"
@@ -102,7 +111,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <label>{{'PRICE' | translate}}</label>
                                     <div class="form-group">
                                         <input required type="number" class="form-control" name="Price"
@@ -113,52 +122,11 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <label>{{'RABAT' | translate}}</label>
                                     <div class="form-group">
                                         <input type="number" class="form-control" name="Rabat"
                                             [(ngModel)]="invoiceItem.Rabat" />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-1">
-                                    <label>{{'PR_WO_VAT' | translate}}</label>
-                                    <div class="form-group">
-                                        <input disabled type="number" class="form-control" name="PriceWithoutVat"
-                                            [(ngModel)]="invoiceItem.PriceWithoutVat" />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-1">
-                                    <label>{{'RABAT_VALUE' | translate}}</label>
-                                    <div class="form-group">
-                                        <input disabled type="number" class="form-control" name="RabatValue"
-                                            [(ngModel)]="invoiceItem.RabatValue" />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-1">
-                                    <label>{{'PR_W_RABAT_WO_VAT' | translate}}</label>
-                                    <div class="form-group">
-                                        <input disabled type="number" class="form-control"
-                                            name="PriceWithRabatWithoutVat"
-                                            [(ngModel)]="invoiceItem.PriceWithRabatWithoutVat" />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-1">
-                                    <label>{{'VAT_VALUE' | translate}}</label>
-                                    <div class="form-group">
-                                        <input disabled type="number" class="form-control" name="VatValue"
-                                            [(ngModel)]="invoiceItem.VatValue" />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-1">
-                                    <label>{{'TOTAL' | translate}}</label>
-                                    <div class="form-group">
-                                        <input disabled type="number" class="form-control" name="Total"
-                                            [(ngModel)]="invoiceItem.Total" />
                                     </div>
                                 </div>
 
@@ -211,8 +179,8 @@
                                             {{'TOTAL'
                                             | translate}}
                                         </th>
-                                <th class="text-right">{{'OPTIONS' | translate}}</th>
-
+                                <th class="text-right">{{'OPTIONS' | translate}}
+                                </th>
                                     </tr>
                                 </ng-template>
 
@@ -235,7 +203,7 @@
 
                                         <td class="text-right"><span
                                                 class="ui-column-title text-left float-left">{{'RABAT' | translate
-                                                }}</span>{{ item.Rabat | formatCurrency }}
+                                                }}</span>{{ item.Rabat || '0'}}%
                                         </td>
 
                                         <td class="text-right"><span
@@ -265,7 +233,7 @@
 
                                         <td class="text-right"><span class="ui-column-title text-left float-left">{{'OPTIONS' |
                                             translate }}</span>
-                                        <a (click)="removeItem(item.Id)"
+                                        <a (click)="removeItem(item.Id)" [attr.disabled]="invoice.Status == 1 ? true : null"
                                             class="btn text-info btn-link btn-just-icon edit width-auto">
                                             <i class="now-ui-icons ui-1_simple-remove"></i>
                                             <span class="icon-item-title text-info">{{ 'REMOVE' | translate

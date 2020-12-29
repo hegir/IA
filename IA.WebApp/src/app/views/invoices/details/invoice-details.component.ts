@@ -47,12 +47,12 @@ export class InvoiceDetailsComponent implements OnInit {
             this.invoicesService.FindById(this.invoiceId).then(inv => {
                 if (inv != null) {
                     this.invoice = inv;
+                    console.log(this.invoice)
                     this.selectedType = this.InvoiceTypes[inv.Type];
 
                     this.invoicesService.FindItems(this.invoiceId).then(items => {
                         if (items != null) {
                             this.invoiceItems = items;
-                            console.log(this.invoiceItems);
                         }
                     })
                 }
@@ -100,8 +100,7 @@ export class InvoiceDetailsComponent implements OnInit {
         }
     }
 
-    approveInvoice()
-    {
+    approveInvoice() {
         this.invoice.Action = InvoiceAction.Update;
         this.invoice.Action = InvoiceAction.Approve;
         this.invoicesService.Update(this.invoiceId, this.invoice).then(x => {
@@ -134,8 +133,13 @@ export class InvoiceDetailsComponent implements OnInit {
 
     }
 
-    removeItem(itemId: number)
-    {
-        
+    removeItem(itemId: number) {
+        this.invoicesService.DeleteItem(this.invoiceId, itemId.toString()).then(res => {
+            if (res != null) {
+                this.invoice = res;
+                this.notificationService.success("REMOVED_SUCCESS");
+                this.invoiceItems.splice(this.invoiceItems.findIndex(x => x.Id == itemId), 1)
+            }
+        })
     }
 }

@@ -106,10 +106,16 @@
                                 <td class="text-right"><span class="ui-column-title text-left float-left">{{'OPTIONS' |
                                         translate }}</span>
                                     <a (click)="edit(invoice.Id)"
-                                        class="btn text-info btn-link btn-just-icon edit width-auto">
+                                        class="btn text-secondary btn-link btn-just-icon edit width-auto">
                                         <i class="now-ui-icons users_single-02"></i>
-                                        <span class="icon-item-title text-info">{{ 'INVOICE_DETAILS_SHORT' | translate
+                                        <span class="icon-item-title text-secondary">{{ 'INVOICE_DETAILS_SHORT' | translate
                                             }}</span></a>
+
+                                            <a (click)="remove(invoice.Id)" [attr.disabled]="invoice.Status == 1 ? true : null"
+                                            class="btn text-info btn-link btn-just-icon edit width-auto">
+                                            <i class="now-ui-icons ui-1_simple-remove"></i>
+                                            <span class="icon-item-title text-info">{{ 'REMOVE' | translate
+                                                }}</span></a>
                                 </td>
                             </tr>
                         </ng-template>

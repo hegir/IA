@@ -20,15 +20,6 @@ export const AppRoutes: Routes = [
         loadChildren: "./views/dashboard/dashboard.module#DashboardModule"
       },
       {
-        path: "tables",
-        loadChildren: "./pages/tables/tables.module#TablesModule"
-      },
-      {
-        path: "users",
-        loadChildren:
-          "./views/users/user-profile/user-profile.module#UserModule"
-      },
-      {
         path: "invoices",
         loadChildren:
           "./views/invoices/invoices.module#InvoicesModule"
